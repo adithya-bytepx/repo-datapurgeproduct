@@ -1989,8 +1989,8 @@
     }
   }
 
-  // Initial view
-  showAuthView('signin');
+  // Initial view — landing.html links to index.html#signup for "Create account".
+  showAuthView(location.hash === '#signup' ? 'signup' : 'signin');
 })();
 </script>
 </body>
