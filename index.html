@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Data Purge Studio by Byte BX — a unified workspace to clean, transform and prepare data. Interactive prototype." />
+<title>Data Purge Studio · Byte BX</title>
+<style>
+  :root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --primary-soft: #eef2ff;
+    --primary-ring: rgba(79, 70, 229, 0.25);
+    --bg: #f6f7fb;
+    --surface: #ffffff;
+    --surface-2: #f9fafb;
+    --border: #e5e7eb;
+    --border-strong: #d1d5db;
+    --text: #111827;
+    --text-2: #4b5563;
+    --text-3: #9ca3af;
+    --navy: #0f172a;
+    --navy-2: #1e293b;
+    --navy-3: #334155;
+    --navy-text: #cbd5e1;
+    --success: #059669;
+    --success-soft: #ecfdf5;
+    --warning: #d97706;
+    --warning-soft: #fffbeb;
+    --danger: #dc2626;
+    --danger-soft: #fef2f2;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+    --shadow: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
+    --shadow-lg: 0 20px 40px -12px rgba(16, 24, 40, 0.25);
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  [hidden] { display: none !important; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ---------- Brand ---------- */
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, #6366f1, #4338ca);
+    color: #fff; display: grid; place-items: center;
+    font-weight: 800; font-size: 13px; letter-spacing: -0.02em;
+    box-shadow: 0 2px 6px rgba(79, 70, 229, 0.35);
+    flex-shrink: 0;
+  }
+  .brand-name { font-weight: 700; font-size: 15px; letter-spacing: -0.01em; line-height: 1.1; }
+  .brand-sub { font-size: 11px; color: var(--text-3); font-weight: 500; letter-spacing: 0.02em; }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    height: 36px; padding: 0 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text);
+    font-weight: 600; font-size: 13px;
+    cursor: pointer; white-space: nowrap;
+    transition: background .15s, border-color .15s, box-shadow .15s, color .15s;
+  }
+  .btn:hover { background: var(--surface-2); border-color: #b8bec8; }
+  .btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--primary-ring); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+  .btn-ghost { background: transparent; border-color: transparent; color: var(--text-2); }
+  .btn-ghost:hover { background: #f1f2f6; border-color: transparent; color: var(--text); }
+  .btn-danger-ghost { background: transparent; border-color: transparent; color: var(--danger); }
+  .btn-danger-ghost:hover { background: var(--danger-soft); border-color: transparent; }
+  .btn-sm { height: 30px; padding: 0 10px; font-size: 12px; }
+  .btn-block { width: 100%; }
+  .btn-link { background: none; border: none; padding: 0; color: var(--primary); font-weight: 600; cursor: pointer; }
+  .btn-link:hover { text-decoration: underline; }
+  .btn .spinner { width: 14px; height: 14px; border-width: 2px; }
+
+  .spinner {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid rgba(0,0,0,.12); border-top-color: currentColor;
+    animation: spin .7s linear infinite; display: inline-block; flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- Forms ---------- */
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .field label, .label { font-size: 12px; font-weight: 600; color: var(--text-2); }
+  .label-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .optional { color: var(--text-3); font-weight: 500; }
+  .input, .select, .textarea {
+    width: 100%; height: 38px; padding: 0 12px;
+    border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+    background: var(--surface); outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .select { padding-right: 30px; appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center; }
+  .textarea { height: auto; min-height: 96px; padding: 10px 12px; resize: vertical; line-height: 1.5; }
+  .input:focus, .select:focus, .textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-ring); }
+  .input.invalid, .select.invalid { border-color: var(--danger); }
+  .input.invalid:focus { box-shadow: 0 0 0 3px rgba(220,38,38,.18); }
+  .input-sm, .select-sm { height: 32px; font-size: 13px; }
+  .error-msg { font-size: 12px; color: var(--danger); min-height: 0; }
+  .error-msg:empty { display: none; }
+  .checkbox { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--text-2); cursor: pointer; }
+  .checkbox input { margin: 2px 0 0; width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* ---------- Auth ---------- */
+  #auth { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .auth-left { display: flex; flex-direction: column; padding: 28px 32px; background: var(--surface); }
+  .auth-center { flex: 1; display: grid; place-items: center; padding: 32px 0; }
+  .auth-card {
+    width: 100%; max-width: 400px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 32px; box-shadow: var(--shadow);
+  }
+  .auth-card h1 { font-size: 22px; margin: 0 0 4px; letter-spacing: -0.02em; }
+  .auth-card .subtitle { color: var(--text-2); margin: 0 0 24px; font-size: 13px; }
+  .auth-foot { margin-top: 18px; text-align: center; font-size: 13px; color: var(--text-2); }
+  .auth-legal { font-size: 11px; color: var(--text-3); }
+  .form-alert {
+    display: none; padding: 10px 12px; border-radius: var(--radius-sm);
+    background: var(--danger-soft); color: var(--danger); font-size: 12px; margin-bottom: 14px;
+    border: 1px solid #fecaca;
+  }
+  .form-alert.show { display: block; }
+  .pw-wrap { position: relative; }
+  .pw-wrap .input { padding-right: 56px; }
+  .pw-toggle { position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; font-size: 12px; font-weight: 600; color: var(--text-3); cursor: pointer; padding: 4px 6px; }
+  .pw-toggle:hover { color: var(--text); }
+
+  .auth-right {
+    position: relative; overflow: hidden;
+    background: radial-gradient(1200px 600px at 110% -10%, #312e81 0%, transparent 60%), var(--navy);
+    color: #e2e8f0; padding: 48px 56px; display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .auth-right::after {
+    content: "D"; position: absolute; right: -40px; bottom: -120px;
+    font-size: 520px; font-weight: 900; line-height: 1; color: rgba(255,255,255,0.035); pointer-events: none;
+  }
+  .auth-right .eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: .12em; color: #a5b4fc; font-weight: 700; }
+  .auth-right h2 { font-size: 36px; line-height: 1.15; letter-spacing: -0.03em; margin: 14px 0 14px; color: #fff; max-width: 440px; }
+  .auth-right p.lead { color: #94a3b8; max-width: 420px; font-size: 15px; margin: 0; }
+  .feature-list { list-style: none; padding: 0; margin: 32px 0 0; display: grid; gap: 14px; max-width: 420px; position: relative; z-index: 1; }
+  .feature-list li { display: flex; gap: 12px; align-items: flex-start; }
+  .feature-list .fi {
+    width: 30px; height: 30px; border-radius: 8px; background: rgba(99,102,241,.18); color: #a5b4fc;
+    display: grid; place-items: center; flex-shrink: 0; font-size: 14px;
+  }
+  .feature-list strong { color: #fff; display: block; font-size: 14px; }
+  .feature-list span { color: #94a3b8; font-size: 13px; }
+  .auth-right .quote { font-size: 12px; color: #64748b; position: relative; z-index: 1; }
+
+  /* ---------- App shell ---------- */
+  #app { height: 100vh; display: flex; flex-direction: column; }
+  .topbar {
+    height: 58px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 18px; background: var(--surface); border-bottom: 1px solid var(--border); position: relative; z-index: 20;
+  }
+  .topbar .tagline { color: var(--text-3); font-size: 12px; margin-left: 16px; padding-left: 16px; border-left: 1px solid var(--border); }
+  .topbar-right { display: flex; align-items: center; gap: 10px; position: relative; }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--primary-soft); color: var(--primary);
+    display: grid; place-items: center; font-weight: 700; font-size: 12px; border: 1px solid #c7d2fe;
+  }
+  .user-meta { text-align: right; line-height: 1.2; }
+  .user-meta .n { font-weight: 600; font-size: 13px; }
+  .user-meta .e { font-size: 11px; color: var(--text-3); }
+  .icon-btn {
+    width: 34px; height: 34px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: var(--surface); cursor: pointer; display: grid; place-items: center; color: var(--text-2);
+    font-size: 18px; line-height: 1;
+  }
+  .icon-btn:hover { background: var(--surface-2); color: var(--text); }
+  .icon-btn[aria-expanded="true"] { background: var(--primary-soft); border-color: #c7d2fe; color: var(--primary); }
+
+  .dropdown {
+    position: absolute; top: calc(100% + 8px); right: 0; min-width: 220px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow-lg); padding: 6px; z-index: 50;
+    animation: pop .12s ease-out;
+  }
+  @keyframes pop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .dropdown .dd-head { padding: 8px 10px 10px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+  .dropdown .dd-head .n { font-weight: 600; }
+  .dropdown .dd-head .e { color: var(--text-3); font-size: 12px; }
+  .dd-item {
+    display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; border-radius: 6px;
+    background: none; border: none; cursor: pointer; text-align: left; font-size: 13px; color: var(--text);
+  }
+  .dd-item:hover, .dd-item:focus-visible { background: var(--surface-2); outline: none; }
+  .dd-item .ic { width: 18px; text-align: center; color: var(--text-3); }
+  .dd-item .hint { margin-left: auto; font-size: 11px; color: var(--text-3); }
+  .dd-item.danger { color: var(--danger); }
+  .dd-item.danger .ic { color: var(--danger); }
+  .dd-sep { height: 1px; background: var(--border); margin: 4px 0; }
+  .dd-item .badge-default { margin-left: auto; font-size: 10px; font-weight: 700; color: var(--primary); background: var(--primary-soft); padding: 2px 6px; border-radius: 999px; }
+
+  .workspace {
+    flex: 1; min-height: 0; display: grid;
+    grid-template-columns: 272px minmax(0, 1fr) 340px;
+  }
+
+  /* ---------- Left panel ---------- */
+  .panel-left {
+    background: var(--navy); color: var(--navy-text); overflow-y: auto; padding: 18px 14px 20px;
+    display: flex; flex-direction: column; gap: 22px;
+  }
+  .panel-left::-webkit-scrollbar { width: 8px; }
+  .panel-left::-webkit-scrollbar-thumb { background: var(--navy-3); border-radius: 8px; }
+  .pl-title { font-size: 15px; color: #fff; font-weight: 700; margin: 0 4px; letter-spacing: -0.01em; }
+  .pl-sub { font-size: 12px; color: #64748b; margin: 2px 4px 0; }
+  .pl-section-title {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; color: #64748b;
+    margin: 0 4px 10px;
+  }
+  .src-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .src-tile {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+    padding: 12px; border-radius: 8px; border: 1px dashed #334155; background: rgba(255,255,255,0.02);
+    color: #e2e8f0; cursor: pointer; text-align: left; transition: all .15s;
+  }
+  .src-tile:hover { border-color: #6366f1; background: rgba(99,102,241,0.1); }
+  .src-tile:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(99,102,241,.4); }
+  .src-tile .ext {
+    font-size: 10px; font-weight: 800; letter-spacing: .04em; padding: 3px 6px; border-radius: 4px; color: #fff;
+  }
+  .src-tile .nm { font-size: 13px; font-weight: 600; }
+  .src-tile .ds { font-size: 11px; color: #64748b; margin-top: -6px; }
+  .src-list { display: grid; gap: 6px; }
+  .src-row {
+    display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; border: 1px solid #1e293b;
+    background: var(--navy-2); color: #e2e8f0; cursor: pointer; text-align: left; width: 100%; transition: all .15s;
+  }
+  .src-row:hover { border-color: #6366f1; }
+  .src-row:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(99,102,241,.4); }
+  .src-row .logo { width: 28px; height: 28px; border-radius: 6px; display: grid; place-items: center; font-size: 12px; font-weight: 800; color: #fff; flex-shrink: 0; }
+  .src-row .nm { font-weight: 600; font-size: 13px; }
+  .src-row .ds { font-size: 11px; color: #64748b; }
+  .src-row .arrow { margin-left: auto; color: #475569; }
+
+  .ds-count { font-size: 11px; color: #94a3b8; background: var(--navy-2); padding: 1px 8px; border-radius: 999px; letter-spacing: 0; text-transform: none; }
+  .ds-list { display: grid; gap: 6px; }
+  .ds-chip {
+    display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+    padding: 9px 10px; border-radius: 8px; border: 1px solid transparent; background: var(--navy-2);
+    cursor: pointer; color: #e2e8f0; transition: all .15s; position: relative;
+  }
+  .ds-chip:hover { border-color: #475569; }
+  .ds-chip:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(99,102,241,.4); }
+  .ds-chip.active { border-color: #6366f1; background: rgba(99,102,241,0.16); }
+  .ds-chip.active::before { content: ""; position: absolute; left: -1px; top: 8px; bottom: 8px; width: 3px; border-radius: 3px; background: #818cf8; }
+  .ds-chip.loading { cursor: progress; opacity: .85; }
+  .ds-chip .tag { font-size: 9px; font-weight: 800; padding: 3px 5px; border-radius: 4px; color: #fff; flex-shrink: 0; min-width: 34px; text-align: center; }
+  .ds-chip .meta { min-width: 0; flex: 1; }
+  .ds-chip .nm { font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ds-chip .ds { font-size: 11px; color: #64748b; }
+  .ds-chip .rm {
+    background: none; border: none; color: #64748b; cursor: pointer; font-size: 16px; line-height: 1;
+    padding: 2px 4px; border-radius: 4px; opacity: 0; transition: opacity .15s;
+  }
+  .ds-chip:hover .rm, .ds-chip:focus-within .rm { opacity: 1; }
+  .ds-chip .rm:hover { color: #f87171; background: rgba(248,113,113,.1); }
+  .ds-chip .spinner { border-color: rgba(255,255,255,.15); border-top-color: #a5b4fc; width: 14px; height: 14px; }
+  .ds-empty { font-size: 12px; color: #64748b; padding: 14px 12px; border: 1px dashed #334155; border-radius: 8px; text-align: center; }
+  .pl-note { font-size: 11px; color: #64748b; margin: 0; }
+  .pl-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 10px 4px 0; }
+  .btn-clear-all {
+    background: none; border: 1px solid #334155; color: #cbd5e1; font-size: 11px; font-weight: 600; cursor: pointer; padding: 4px 8px;
+    border-radius: 6px; white-space: nowrap;
+  }
+  .btn-clear-all:hover:not(:disabled) { color: #f87171; border-color: #f87171; }
+  .btn-clear-all:disabled { opacity: .4; cursor: not-allowed; }
+
+  .c-csv { background: #059669; } .c-xls { background: #15803d; } .c-xml { background: #d97706; } .c-json { background: #7c3aed; }
+  .c-snow { background: #0ea5e9; } .c-sf { background: #2563eb; } .c-db { background: #475569; } .c-merge { background: #db2777; }
+
+  /* ---------- Center ---------- */
+  .panel-center { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--bg); }
+  .toolbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--surface);
+  }
+  .crumbs { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 13px; color: var(--text-3); }
+  .crumbs strong { color: var(--text); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .toolbar-actions { display: flex; gap: 8px; position: relative; }
+  .overview { flex: 1; min-height: 0; overflow: auto; padding: 20px; }
+  .empty-state {
+    height: 100%; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    border: 1.5px dashed var(--border-strong); border-radius: 14px; background: var(--surface); padding: 32px;
+  }
+  .empty-ill {
+    width: 64px; height: 64px; border-radius: 16px; background: var(--warning-soft); display: grid; place-items: center;
+    font-size: 28px; margin-bottom: 14px;
+  }
+  .empty-state h3 { margin: 0 0 6px; font-size: 16px; }
+  .empty-state p { margin: 0 0 18px; color: var(--text-2); max-width: 380px; }
+  .empty-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+
+  .ds-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .ds-title { display: flex; align-items: center; gap: 10px; }
+  .ds-title h2 { margin: 0; font-size: 18px; letter-spacing: -0.01em; word-break: break-all; }
+  .ds-title .tag { font-size: 10px; font-weight: 800; padding: 3px 6px; border-radius: 4px; color: #fff; }
+  .ds-src { color: var(--text-3); font-size: 12px; margin-top: 4px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 999px; }
+  .pill-ok { background: var(--success-soft); color: var(--success); }
+  .pill-ok::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow-sm); }
+  .stat .k { font-size: 12px; color: var(--text-2); font-weight: 500; display: flex; align-items: center; gap: 6px; }
+  .stat .v { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat .s { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .stat.warn .v { color: var(--warning); }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+  .card-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border); gap: 10px; flex-wrap: wrap; }
+  .card-head h3 { margin: 0; font-size: 13px; font-weight: 700; }
+  .card-head .muted { font-size: 12px; color: var(--text-3); }
+  .legend { display: flex; gap: 12px; font-size: 11px; color: var(--text-2); align-items: center; }
+  .legend .sw { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 5px; vertical-align: -1px; }
+
+  .table-wrap { overflow-x: auto; }
+  table.preview { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12.5px; }
+  table.preview th, table.preview td { padding: 8px 14px; text-align: left; white-space: nowrap; border-bottom: 1px solid #f0f1f4; }
+  table.preview thead th { position: sticky; top: 0; background: var(--surface-2); font-weight: 600; color: var(--text-2); font-size: 12px; border-bottom: 1px solid var(--border); }
+  table.preview thead tr.colstats th { background: var(--surface); font-weight: 500; font-size: 11px; color: var(--text-3); padding-top: 6px; padding-bottom: 6px; }
+  table.preview td.rownum, table.preview th.rownum { color: var(--text-3); width: 1%; font-variant-numeric: tabular-nums; text-align: right; padding-right: 8px; }
+  table.preview tbody tr:hover td { background: #fafbff; }
+  table.preview td.num { font-variant-numeric: tabular-nums; }
+  .th-inner { display: flex; align-items: center; gap: 6px; }
+  .type-badge { font-size: 9.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; background: #f1f2f6; color: var(--text-2); font-family: var(--mono); text-transform: uppercase; }
+  .show-nulls th.has-null { background: #fff7ed; color: #9a3412; }
+  .show-nulls th.has-null .warn-dot { display: inline-block; }
+  .warn-dot { display: none; width: 6px; height: 6px; border-radius: 50%; background: var(--warning); }
+  .show-nulls td.col-null { background: #fffbf5; }
+  .null-cell { color: var(--text-3); font-style: italic; font-family: var(--mono); font-size: 11.5px; }
+  .show-nulls .null-cell { color: #c2410c; background: #ffedd5; padding: 1px 6px; border-radius: 4px; font-style: normal; font-weight: 600; }
+  .null-bar { display: inline-block; width: 36px; height: 4px; background: #eef0f4; border-radius: 4px; overflow: hidden; vertical-align: middle; margin-right: 5px; }
+  .null-bar i { display: block; height: 100%; background: var(--warning); }
+  .table-foot { padding: 10px 16px; font-size: 12px; color: var(--text-3); display: flex; justify-content: space-between; border-top: 1px solid var(--border); }
+
+  /* Activity */
+  .activity { height: 250px; flex-shrink: 0; border-top: 1px solid var(--border); background: var(--surface); display: flex; flex-direction: column; }
+  .activity-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; border-bottom: 1px solid var(--border); }
+  .activity-head h3 { margin: 0; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+  .count-badge { font-size: 11px; font-weight: 600; background: #f1f2f6; color: var(--text-2); padding: 1px 8px; border-radius: 999px; }
+  .activity-list { list-style: none; margin: 0; padding: 6px 12px 10px; overflow-y: auto; flex: 1; }
+  .activity-list li {
+    display: grid; grid-template-columns: 64px 86px minmax(0, 1fr); align-items: baseline; gap: 10px;
+    padding: 6px 8px; border-radius: 6px; font-size: 12.5px;
+  }
+  .activity-list li:hover { background: var(--surface-2); }
+  .activity-list li.fresh { animation: flash 1.2s ease-out; }
+  @keyframes flash { from { background: var(--primary-soft); } to { background: transparent; } }
+  .activity-list .time { font-family: var(--mono); font-size: 11.5px; color: var(--text-3); }
+  .activity-list .desc { color: var(--text); overflow-wrap: anywhere; }
+  .activity-list .desc code { font-family: var(--mono); font-size: 11.5px; background: #f1f2f6; padding: 0 4px; border-radius: 3px; }
+  .cat { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 2px 6px; border-radius: 4px; text-align: center; justify-self: start; }
+  .cat-import { background: #ecfdf5; color: #047857; }
+  .cat-connect { background: #eff6ff; color: #1d4ed8; }
+  .cat-prep { background: #fff7ed; color: #c2410c; }
+  .cat-transform { background: #f5f3ff; color: #6d28d9; }
+  .cat-ai { background: #fdf2f8; color: #be185d; }
+  .cat-export { background: #f0fdfa; color: #0f766e; }
+  .cat-system { background: #f1f5f9; color: #475569; }
+  .activity-empty { padding: 26px; text-align: center; color: var(--text-3); font-size: 12.5px; }
+
+  /* ---------- Right ---------- */
+  .panel-right { background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
+  .pr-head { padding: 16px 18px 0; }
+  .pr-head h2 { margin: 0 0 12px; font-size: 15px; letter-spacing: -0.01em; }
+  .tabs { display: flex; gap: 2px; background: #f1f2f6; padding: 3px; border-radius: 8px; }
+  .tab {
+    flex: 1; height: 30px; border: none; background: none; border-radius: 6px; cursor: pointer;
+    font-size: 12.5px; font-weight: 600; color: var(--text-2); display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .tab:hover { color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+  .tab:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--primary-ring); }
+  .tab-desc { font-size: 12px; color: var(--text-3); margin: 12px 0 0; }
+  .pr-body { flex: 1; overflow-y: auto; padding: 14px 18px 24px; }
+  .notice {
+    display: flex; gap: 10px; align-items: flex-start; font-size: 12px; padding: 10px 12px; border-radius: 8px;
+    background: var(--warning-soft); color: #92400e; border: 1px solid #fde68a; margin-bottom: 14px;
+  }
+  .op {
+    border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 12px; background: var(--surface);
+    transition: border-color .15s;
+  }
+  .op:hover { border-color: var(--border-strong); }
+  .op-head { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
+  .op-ic { width: 28px; height: 28px; border-radius: 7px; display: grid; place-items: center; font-size: 13px; flex-shrink: 0; }
+  .op h4 { margin: 0; font-size: 13px; }
+  .op p { margin: 2px 0 0; font-size: 11.5px; color: var(--text-3); }
+  .op .field { margin-bottom: 10px; }
+  .op .field label { font-size: 11.5px; }
+  .op-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; }
+  .op-msg { font-size: 11.5px; color: var(--success); font-weight: 600; opacity: 0; transition: opacity .2s; }
+  .op-msg.show { opacity: 1; }
+  .op-msg.err { color: var(--danger); }
+  fieldset.op-fieldset { border: none; padding: 0; margin: 0; min-width: 0; }
+  fieldset.op-fieldset:disabled { opacity: .55; }
+  .seg { display: flex; background: #f1f2f6; border-radius: 6px; padding: 2px; margin-bottom: 10px; }
+  .seg label { flex: 1; text-align: center; font-size: 12px; font-weight: 600; padding: 5px 6px; border-radius: 5px; cursor: pointer; color: var(--text-2); }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg input:checked + span { color: var(--text); }
+  .seg label:has(input:checked) { background: var(--surface); box-shadow: var(--shadow-sm); color: var(--text); }
+  .seg label:has(input:focus-visible) { box-shadow: 0 0 0 2px var(--primary-ring); }
+
+  .ai-hero {
+    border-radius: var(--radius); padding: 14px; margin-bottom: 12px;
+    background: linear-gradient(135deg, #eef2ff 0%, #fdf2f8 100%); border: 1px solid #e0e7ff;
+  }
+  .ai-hero h4 { margin: 0 0 4px; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+  .ai-hero p { margin: 0; font-size: 12px; color: var(--text-2); }
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 12px; }
+  .preset {
+    font-size: 11.5px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--border-strong);
+    background: var(--surface); cursor: pointer; color: var(--text-2); font-weight: 500;
+  }
+  .preset:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
+  .ai-status { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--primary); padding: 12px; background: var(--primary-soft); border-radius: 8px; margin-top: 12px; }
+  .ai-status .spinner { border-color: rgba(79,70,229,.2); border-top-color: var(--primary); }
+  .suggestions { margin-top: 14px; }
+  .suggestions h5 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-3); display: flex; justify-content: space-between; }
+  .sugg-list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
+  .sugg-list li {
+    display: flex; gap: 10px; align-items: flex-start; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+    font-size: 12.5px; background: var(--surface); transition: all .2s;
+  }
+  .sugg-list li .n { width: 20px; height: 20px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); font-size: 11px; font-weight: 700; display: grid; place-items: center; flex-shrink: 0; }
+  .sugg-list li .k { font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; display: block; margin-top: 2px; }
+  .sugg-list li.done { border-color: #a7f3d0; background: var(--success-soft); }
+  .sugg-list li.done .n { background: var(--success); color: #fff; }
+  .ai-success { font-size: 12.5px; color: var(--success); background: var(--success-soft); border: 1px solid #a7f3d0; padding: 10px 12px; border-radius: 8px; font-weight: 600; }
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(2px);
+    display: grid; place-items: center; z-index: 100; padding: 16px; animation: fade .15s ease-out;
+  }
+  @keyframes fade { from { opacity: 0; } }
+  .modal {
+    width: 100%; max-width: 460px; max-height: calc(100vh - 32px); overflow: auto;
+    background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-lg); animation: rise .18s ease-out;
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px) scale(.98); } }
+  .modal-head { display: flex; justify-content: space-between; align-items: flex-start; padding: 18px 20px 0; gap: 12px; }
+  .modal-head h3 { margin: 0; font-size: 16px; letter-spacing: -0.01em; }
+  .modal-head p { margin: 4px 0 0; font-size: 12.5px; color: var(--text-2); }
+  .modal-close { background: none; border: none; font-size: 20px; line-height: 1; color: var(--text-3); cursor: pointer; padding: 4px; border-radius: 6px; }
+  .modal-close:hover { background: #f1f2f6; color: var(--text); }
+  .modal-body { padding: 18px 20px; }
+  .modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid var(--border); background: var(--surface-2); border-radius: 0 0 14px 14px; }
+  .modal-foot .left { margin-right: auto; font-size: 12px; color: var(--text-3); align-self: center; }
+
+  .dropzone {
+    border: 1.5px dashed var(--border-strong); border-radius: 10px; padding: 26px 16px; text-align: center; cursor: pointer;
+    transition: all .15s; background: var(--surface-2);
+  }
+  .dropzone:hover, .dropzone.drag { border-color: var(--primary); background: var(--primary-soft); }
+  .dropzone:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--primary-ring); }
+  .dropzone .dz-ic { font-size: 26px; }
+  .dropzone strong { display: block; margin: 6px 0 2px; }
+  .dropzone span { font-size: 12px; color: var(--text-3); }
+  .or { display: flex; align-items: center; gap: 10px; color: var(--text-3); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; margin: 14px 0; }
+  .or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+  .sample-list { display: grid; gap: 6px; }
+  .sample {
+    display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; text-align: left;
+    border: 1px solid var(--border); border-radius: 8px; background: var(--surface); cursor: pointer;
+  }
+  .sample:hover { border-color: var(--primary); background: var(--primary-soft); }
+  .sample .nm { font-weight: 600; font-size: 13px; font-family: var(--mono); }
+  .sample .ds { font-size: 11.5px; color: var(--text-3); margin-left: auto; }
+
+  .kv { display: grid; grid-template-columns: 110px 1fr; gap: 10px 12px; font-size: 13px; }
+  .kv dt { color: var(--text-3); }
+  .kv dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+  .profile-top { display: flex; gap: 14px; align-items: center; margin-bottom: 18px; }
+  .profile-top .avatar { width: 52px; height: 52px; font-size: 17px; }
+  .profile-top .n { font-weight: 700; font-size: 16px; }
+  .profile-top .e { color: var(--text-3); font-size: 12.5px; }
+  .plan-box { margin-top: 16px; padding: 12px 14px; border-radius: 8px; background: var(--primary-soft); font-size: 12.5px; color: #3730a3; display: flex; justify-content: space-between; align-items: center; }
+
+  .draft-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .draft {
+    display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;
+    background: var(--surface); cursor: pointer; text-align: left;
+  }
+  .draft:hover { border-color: var(--primary); background: #fafaff; }
+  .draft .ic { width: 32px; height: 32px; border-radius: 8px; background: #f1f2f6; display: grid; place-items: center; }
+  .draft .nm { font-weight: 600; font-size: 13px; }
+  .draft .ds { font-size: 11.5px; color: var(--text-3); }
+  .draft .exp { margin-left: auto; font-size: 11px; color: var(--warning); font-weight: 600; white-space: nowrap; }
+
+  .setting { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .setting:last-child { border-bottom: none; }
+  .setting .t { font-weight: 600; font-size: 13px; }
+  .setting .d { font-size: 12px; color: var(--text-3); }
+  .switch { position: relative; width: 38px; height: 22px; flex-shrink: 0; }
+  .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 1; }
+  .switch .track { position: absolute; inset: 0; border-radius: 999px; background: #d1d5db; transition: background .15s; }
+  .switch .track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.2); transition: transform .15s; }
+  .switch input:checked + .track { background: var(--primary); }
+  .switch input:checked + .track::after { transform: translateX(16px); }
+  .switch input:focus-visible + .track { box-shadow: 0 0 0 3px var(--primary-ring); }
+
+  .terms-body { font-size: 13px; color: var(--text-2); max-height: 320px; overflow-y: auto; padding-right: 6px; }
+  .terms-body h4 { color: var(--text); margin: 14px 0 4px; font-size: 13px; }
+  .terms-body h4:first-child { margin-top: 0; }
+  .terms-body p { margin: 0 0 6px; }
+
+  /* ---------- Toasts ---------- */
+  .toasts { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 200; pointer-events: none; }
+  .toast {
+    pointer-events: auto; display: flex; align-items: flex-start; gap: 10px; min-width: 260px; max-width: 380px;
+    background: var(--navy); color: #f1f5f9; padding: 12px 14px; border-radius: 10px; box-shadow: var(--shadow-lg);
+    font-size: 13px; animation: toastIn .2s ease-out;
+  }
+  .toast.out { animation: toastOut .2s ease-in forwards; }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } }
+  @keyframes toastOut { to { opacity: 0; transform: translateY(8px); } }
+  .toast .ti { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 800; flex-shrink: 0; }
+  .toast.success .ti { background: #10b981; color: #fff; }
+  .toast.info .ti { background: #6366f1; color: #fff; }
+  .toast.warn .ti { background: #f59e0b; color: #fff; }
+  .toast.error .ti { background: #ef4444; color: #fff; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1180px) {
+    .workspace { grid-template-columns: 240px minmax(0, 1fr) 300px; }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .topbar .tagline { display: none; }
+  }
+  @media (max-width: 900px) {
+    #auth { grid-template-columns: 1fr; }
+    .auth-right { display: none; }
+    .auth-left { padding: 20px 16px; }
+    .auth-card { padding: 24px 20px; }
+    #app { height: auto; min-height: 100vh; }
+    .workspace { grid-template-columns: 1fr; }
+    .panel-left { overflow: visible; }
+    .panel-right { border-left: none; border-top: 1px solid var(--border); }
+    .overview { overflow: visible; }
+    .user-meta { display: none; }
+    .toolbar { padding: 12px 16px; }
+    .toolbar-actions { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= AUTH ================= -->
+<div id="auth">
+  <div class="auth-left">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">BX</div>
+      <div>
+        <div class="brand-name">Data Purge Studio</div>
+        <div class="brand-sub">by Byte BX</div>
+      </div>
+    </div>
+
+    <div class="auth-center">
+      <!-- Sign In -->
+      <section id="view-signin" class="auth-card" aria-labelledby="signin-title">
+        <h1 id="signin-title">Sign in</h1>
+        <p class="subtitle">Welcome back. Sign in to your workspace.</p>
+        <div class="form-alert" id="signin-alert" role="alert"></div>
+        <form id="form-signin" novalidate>
+          <div class="field">
+            <label for="si-email">Email</label>
+            <input class="input" id="si-email" type="email" autocomplete="email" placeholder="you@company.com" />
+            <div class="error-msg" id="si-email-err"></div>
+          </div>
+          <div class="field">
+            <div class="label-row">
+              <label for="si-password" class="label">Password</label>
+              <button type="button" class="btn-link" style="font-size:12px" id="btn-forgot">Forgot password?</button>
+            </div>
+            <div class="pw-wrap">
+              <input class="input" id="si-password" type="password" autocomplete="current-password" placeholder="Enter your password" />
+              <button type="button" class="pw-toggle" data-toggle-pw="si-password">Show</button>
+            </div>
+            <div class="error-msg" id="si-password-err"></div>
+          </div>
+          <label class="checkbox" style="margin-bottom:18px"><input type="checkbox" id="si-remember" checked /> Keep me signed in</label>
+          <button type="submit" class="btn btn-primary btn-block" id="btn-signin" style="height:40px">Sign In</button>
+        </form>
+        <div class="auth-foot">New to Data Purge Studio? <button type="button" class="btn-link" id="to-signup">Create account</button></div>
+      </section>
+
+      <!-- Sign Up -->
+      <section id="view-signup" class="auth-card" aria-labelledby="signup-title" hidden>
+        <h1 id="signup-title">Create account</h1>
+        <p class="subtitle">Start cleaning and preparing data in minutes.</p>
+        <div class="form-alert" id="signup-alert" role="alert"></div>
+        <form id="form-signup" novalidate>
+          <div class="field">
+            <label for="su-name">Full name</label>
+            <input class="input" id="su-name" autocomplete="name" placeholder="Jane Cooper" />
+            <div class="error-msg" id="su-name-err"></div>
+          </div>
+          <div class="field">
+            <label for="su-email">Work email</label>
+            <input class="input" id="su-email" type="email" autocomplete="email" placeholder="jane@company.com" />
+            <div class="error-msg" id="su-email-err"></div>
+          </div>
+          <div class="field">
+            <label for="su-company">Company name <span class="optional">(optional)</span></label>
+            <input class="input" id="su-company" autocomplete="organization" placeholder="Acme Inc." />
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label for="su-password">Password</label>
+              <input class="input" id="su-password" type="password" autocomplete="new-password" placeholder="Min. 8 characters" />
+              <div class="error-msg" id="su-password-err"></div>
+            </div>
+            <div class="field">
+              <label for="su-confirm">Confirm password</label>
+              <input class="input" id="su-confirm" type="password" autocomplete="new-password" placeholder="Repeat password" />
+              <div class="error-msg" id="su-confirm-err"></div>
+            </div>
+          </div>
+          <label class="checkbox"><input type="checkbox" id="su-terms" /> <span>I accept the <button type="button" class="btn-link" id="open-terms">Terms and Conditions</button> and Privacy &amp; data protection notice.</span></label>
+          <div class="error-msg" id="su-terms-err" style="margin-top:6px"></div>
+          <button type="submit" class="btn btn-primary btn-block" id="btn-signup" style="height:40px;margin-top:18px">Create account</button>
+        </form>
+        <div class="auth-foot">Already have an account? <button type="button" class="btn-link" id="to-signin">Back to Sign In</button></div>
+      </section>
+    </div>
+
+    <div class="auth-legal">© 2026 Byte BX. Prototype — no real data leaves your browser.</div>
+  </div>
+
+  <aside class="auth-right" aria-hidden="true">
+    <div>
+      <div class="eyebrow">Byte BX · Data Purge Studio</div>
+      <h2>Welcome to Data Purge Studio</h2>
+      <p class="lead">A unified workspace to clean, transform and prepare data — from raw files and live sources to analysis-ready datasets.</p>
+      <ul class="feature-list">
+        <li><div class="fi">⇪</div><div><strong>Import &amp; connect</strong><span>CSV, Excel, XML, JSON, Snowflake, Salesforce and databases.</span></div></li>
+        <li><div class="fi">✦</div><div><strong>Prepare &amp; transform</strong><span>Remove nulls, rename, merge, retype and reformat in a few clicks.</span></div></li>
+        <li><div class="fi">◎</div><div><strong>Describe it, AI does it</strong><span>Plain-language tasks turned into repeatable operations.</span></div></li>
+      </ul>
+    </div>
+    <div class="quote">Your data, your control — every action is logged and reversible.</div>
+  </aside>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app" hidden>
+  <header class="topbar">
+    <div style="display:flex;align-items:center;min-width:0">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">BX</div>
+        <div>
+          <div class="brand-name">Data Purge Studio</div>
+          <div class="brand-sub">Byte BX</div>
+        </div>
+      </div>
+      <div class="tagline">A unified workspace to clean, transform and prepare data.</div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-meta"><div class="n" id="tb-name"></div><div class="e" id="tb-email"></div></div>
+      <div class="avatar" id="tb-avatar" aria-hidden="true"></div>
+      <button class="icon-btn" id="btn-menu" aria-haspopup="menu" aria-expanded="false" aria-label="Open menu" title="Menu">☰</button>
+      <div class="dropdown" id="menu" role="menu" hidden>
+        <div class="dd-head"><div class="n" id="menu-name"></div><div class="e" id="menu-email"></div></div>
+        <button class="dd-item" role="menuitem" data-open="account"><span class="ic">👤</span>Account details</button>
+        <button class="dd-item" role="menuitem" data-open="drafts"><span class="ic">🗂</span>Saved drafts<span class="hint" id="menu-draft-count"></span></button>
+        <button class="dd-item" role="menuitem" data-open="settings"><span class="ic">⚙</span>Data settings</button>
+        <div class="dd-sep"></div>
+        <button class="dd-item danger" role="menuitem" id="menu-signout"><span class="ic">⎋</span>Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <!-- LEFT: Import & Connect -->
+    <aside class="panel-left" aria-label="Import and connect">
+      <div>
+        <h2 class="pl-title">Import &amp; Connect</h2>
+        <p class="pl-sub">Bring data in from files or live sources.</p>
+      </div>
+
+      <section>
+        <div class="pl-section-title">Upload a file</div>
+        <div class="src-grid">
+          <button class="src-tile" data-upload="csv"><span class="ext c-csv">CSV</span><span class="nm">CSV</span><span class="ds">.csv, .tsv</span></button>
+          <button class="src-tile" data-upload="excel"><span class="ext c-xls">XLS</span><span class="nm">Excel</span><span class="ds">.xlsx, .xls</span></button>
+          <button class="src-tile" data-upload="xml"><span class="ext c-xml">XML</span><span class="nm">XML</span><span class="ds">.xml</span></button>
+          <button class="src-tile" data-upload="json"><span class="ext c-json">{ }</span><span class="nm">JSON</span><span class="ds">.json, .ndjson</span></button>
+        </div>
+        <input type="file" id="file-input" hidden />
+      </section>
+
+      <section>
+        <div class="pl-section-title">Connect a source</div>
+        <div class="src-list">
+          <button class="src-row" data-connect="snowflake"><span class="logo c-snow">❄</span><span><span class="nm">Snowflake</span><br><span class="ds">Cloud data warehouse</span></span><span class="arrow">›</span></button>
+          <button class="src-row" data-connect="salesforce"><span class="logo c-sf">SF</span><span><span class="nm">Salesforce</span><br><span class="ds">CRM objects &amp; reports</span></span><span class="arrow">›</span></button>
+          <button class="src-row" data-connect="database"><span class="logo c-db">DB</span><span><span class="nm">Database</span><br><span class="ds">Postgres, MySQL, SQL Server</span></span><span class="arrow">›</span></button>
+        </div>
+      </section>
+
+      <section>
+        <div class="pl-section-title">
+          <span>Connected datasets</span>
+          <span class="ds-count" id="ds-count">0 / 5</span>
+        </div>
+        <div class="ds-list" id="ds-list"></div>
+        <div class="pl-foot">
+          <p class="pl-note">Up to 5 datasets in this demo.</p>
+          <button class="btn-clear-all" id="btn-clear-all" disabled>✕ Clear all</button>
+        </div>
+      </section>
+    </aside>
+
+    <!-- CENTER: Workspace -->
+    <section class="panel-center" aria-label="Dataset workspace">
+      <div class="toolbar">
+        <div class="crumbs">Workspace <span>/</span> <strong id="crumb-ds">No dataset selected</strong></div>
+        <div class="toolbar-actions">
+          <button class="btn btn-ghost btn-sm" id="btn-clear-ws" title="Clear the dataset overview and selection">✕ Clear workspace</button>
+          <button class="btn btn-sm" id="btn-save-draft">💾 Save as draft</button>
+          <button class="btn btn-primary btn-sm" id="btn-export" aria-haspopup="menu" aria-expanded="false">⇩ Download / Export ▾</button>
+          <div class="dropdown" id="export-menu" role="menu" hidden style="min-width:200px">
+            <div class="dd-head" style="padding:6px 10px 8px"><div class="e">Export current dataset as</div></div>
+            <button class="dd-item" role="menuitem" data-export="CSV"><span class="ic">📄</span>CSV</button>
+            <button class="dd-item" role="menuitem" data-export="Excel"><span class="ic">📗</span>Excel</button>
+            <button class="dd-item" role="menuitem" data-export="JSON"><span class="ic">🧾</span>JSON</button>
+            <button class="dd-item" role="menuitem" data-export="XML"><span class="ic">📰</span>XML</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="overview" id="overview"></div>
+
+      <section class="activity" aria-label="Activity">
+        <div class="activity-head">
+          <h3>Activity <span class="count-badge" id="act-count">0</span></h3>
+          <div style="display:flex;gap:4px">
+            <button class="btn btn-ghost btn-sm" id="btn-undo" disabled>↶ Undo last action</button>
+            <button class="btn btn-ghost btn-sm" id="btn-clear-act" disabled>Clear activity</button>
+          </div>
+        </div>
+        <ol class="activity-list" id="activity-list" aria-live="polite"></ol>
+      </section>
+    </section>
+
+    <!-- RIGHT: Operations -->
+    <aside class="panel-right" aria-label="Operations">
+      <div class="pr-head">
+        <h2>Operations</h2>
+        <div class="tabs" role="tablist">
+          <button class="tab" role="tab" aria-selected="true" aria-controls="tab-prep" id="t-prep" data-tab="prep">Preparation</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="tab-transform" id="t-transform" data-tab="transform" tabindex="-1">Transformation</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="tab-ai" id="t-ai" data-tab="ai" tabindex="-1">✦ AI</button>
+        </div>
+        <p class="tab-desc" id="tab-desc">Collect, clean and consolidate raw data.</p>
+      </div>
+
+      <div class="pr-body">
+        <div class="notice" id="ops-notice"><span>ⓘ</span><span>Select a dataset from the left panel to enable operations.</span></div>
+
+        <!-- Preparation -->
+        <div role="tabpanel" id="tab-prep" aria-labelledby="t-prep">
+          <form class="op" data-op="remove-col" novalidate>
+            <fieldset class="op-fieldset" data-needs-ds>
+              <div class="op-head"><div class="op-ic" style="background:#fef2f2;color:#dc2626">⊖</div><div><h4>Remove columns</h4><p>Drop columns you don't need.</p></div></div>
+              <div class="field"><label for="rc-col">Column</label><select class="select select-sm" id="rc-col" data-cols></select></div>
+              <div class="op-foot"><span class="op-msg"></span><button class="btn btn-primary btn-sm" type="submit">Remove selected column</button></div>
+            </fieldset>
+          </form>
+
+          <form class="op" data-op="remove-nulls" novalidate>
+            <fieldset class="op-fieldset" data-needs-ds>
+              <div class="op-head"><div class="op-ic" style="background:#fff7ed;color:#c2410c">∅</div><div><h4>Remove nulls</h4><p>Remove rows where values are empty.</p></div></div>
+              <div class="seg" role="radiogroup" aria-label="Null removal mode">
+                <label><input type="radio" name="rn-mode" value="column" checked /><span>In a column</span></label>
+                <label><input type="radio" name="rn-mode" value="any" /><span>Any null</span></label>
+              </div>
+              <div class="field" id="rn-col-field"><label for="rn-col">Column</label><select class="select select-sm" id="rn-col" data-cols></select></div>
+              <div class="op-foot"><span class="op-msg"></span><button class="btn btn-primary btn-sm" type="submit">Apply</button></div>
+            </fieldset>
+          </form>
+
+          <form class="op" data-op="replace" novalidate>
+            <fieldset class="op-fieldset" data-needs-ds>
+              <div class="op-head"><div class="op-ic" style="background:#eff6ff;color:#2563eb">⇄</div><div><h4>Replace / rename</h4><p>Rename a column or replace values.</p></div></div>
+              <div class="seg" role="radiogroup" aria-label="Replace mode">
+                <label><input type="radio" name="rp-mode" value="rename" checked /><span>Rename column</span></label>
+                <label><input type="radio" name="rp-mode" value="replace" /><span>Replace value</span></label>
+              </div>
+              <div id="rp-rename">
+                <div class="row-2">
+                  <div class="field"><label for="rp-old-col">Old name</label><select class="select select-sm" id="rp-old-col" data-cols></select></div>
+                  <div class="field"><label for="rp-new-col">New name</label><input class="input input-sm" id="rp-new-col" placeholder="e.g. customer_email" /></div>
+                </div>
+              </div>
+              <div id="rp-replace" hidden>
+                <div class="field"><label for="rp-col">Column</label><select class="select select-sm" id="rp-col" data-cols></select></div>
+                <div class="row-2">
+                  <div class="field"><label for="rp-old-val">Old value</label><input class="input input-sm" id="rp-old-val" placeholder="null" /></div>
+                  <div class="field"><label for="rp-new-val">New value</label><input class="input input-sm" id="rp-new-val" placeholder="unknown" /></div>
+                </div>
+              </div>
+              <div class="op-foot"><span class="op-msg"></span><button class="btn btn-primary btn-sm" type="submit">Apply</button></div>
+            </fieldset>
+          </form>
+
+          <form class="op" data-op="merge" novalidate>
+            <fieldset class="op-fieldset" data-needs-ds>
+              <div class="op-head"><div class="op-ic" style="background:#fdf2f8;color:#db2777">⋈</div><div><h4>Join / merge datasets</h4><p>Combine the selected dataset with another one.</p></div></div>
+              <div class="field"><label for="mg-ds">Second dataset</label><select class="select select-sm" id="mg-ds"></select></div>
+              <div class="row-2">
+                <div class="field"><label for="mg-type">Join type</label>
+                  <select class="select select-sm" id="mg-type"><option>Inner</option><option selected>Left</option><option>Right</option></select></div>
+                <div class="field"><label for="mg-key">Join key</label><select class="select select-sm" id="mg-key" data-cols></select></div>
+              </div>
+              <div class="op-foot"><span class="op-msg"></span><button class="btn btn-primary btn-sm" type="submit">Merge</button></div>
+            </fieldset>
+          </form>
+        </div>
+
+        <!-- Transformation -->
+        <div role="tabpanel" id="tab-transform" aria-labelledby="t-transform" hidden>
+          <form class="op" data-op="type" novalidate>
+            <fieldset class="op-fieldset" data-needs-ds>
+              <div class="op-head"><div class="op-ic" style="background:#f5f3ff;color:#7c3aed">T</div><div><h4>Change data type</h4><p>Cast a column to a different type.</p></div></div>
+              <div class="row-2">
+                <div class="field"><label for="ty-col">Column</label><select class="select select-sm" id="ty-col" data-cols></select></div>
+                <div class="field"><label for="ty-type">Target type</label>
+                  <select class="select select-sm" id="ty-type"><option>String</option><option selected>Number</option><option>Date</option><option>Boolean</option></select></div>
+              </div>
+              <div class="op-foot"><span class="op-msg"></span><button class="btn btn-primary btn-sm" type="submit">Apply</button></div>
+            </fieldset>
+          </form>
+
+          <form class="op" data-op="format" novalidate>
+            <fieldset class="op-fieldset" data-needs-ds>
+              <div class="op-head"><div class="op-ic" style="background:#ecfdf5;color:#059669">¶</div><div><h4>Format values</h4><p>Standardise how values are displayed.</p></div></div>
+              <div class="field"><label for="fm-col">Column</label><select class="select select-sm" id="fm-col" data-cols></select></div>
+              <div class="field"><label for="fm-type">Format</label>
+                <select class="select select-sm" id="fm-type">
+                  <option value="currency (USD)">Currency — $1,234.50</option>
+                  <option value="YYYY-MM-DD">Date — YYYY-MM-DD</option>
+                  <option value="DD/MM/YYYY">Date — DD/MM/YYYY</option>
+                  <option value="percentage">Percentage — 12.5%</option>
+                  <option value="UPPERCASE">Text — UPPERCASE</option>
+                  <option value="lowercase">Text — lowercase</option>
+                  <option value="Title Case">Text — Title Case</option>
+                  <option value="trimmed whitespace">Text — Trim whitespace</option>
+                </select></div>
+              <div class="op-foot"><span class="op-msg"></span><button class="btn btn-primary btn-sm" type="submit">Apply</button></div>
+            </fieldset>
+          </form>
+
+          <form class="op" data-op="split" novalidate>
+            <fieldset class="op-fieldset" data-needs-ds>
+              <div class="op-head"><div class="op-ic" style="background:#eff6ff;color:#2563eb">⫽</div><div><h4>Split / extract</h4><p>Split a column into parts by a delimiter.</p></div></div>
+              <div class="row-2">
+                <div class="field"><label for="sp-col">Column</label><select class="select select-sm" id="sp-col" data-cols></select></div>
+                <div class="field"><label for="sp-delim">Delimiter</label><input class="input input-sm" id="sp-delim" placeholder="e.g. @ or , or space" value="@" /></div>
+              </div>
+              <div class="field"><label for="sp-parts">Keep</label>
+                <select class="select select-sm" id="sp-parts"><option value="all parts">All parts (new columns)</option><option value="first part">First part only</option><option value="last part">Last part only</option></select></div>
+              <div class="op-foot"><span class="op-msg"></span><button class="btn btn-primary btn-sm" type="submit">Split column</button></div>
+            </fieldset>
+          </form>
+        </div>
+
+        <!-- AI -->
+        <div role="tabpanel" id="tab-ai" aria-labelledby="t-ai" hidden>
+          <div class="ai-hero">
+            <h4>✦ AI data preparation</h4>
+            <p>Describe your data task in plain language. AI identifies the relevant operations and runs them for you.</p>
+          </div>
+          <fieldset class="op-fieldset" data-needs-ds>
+            <div class="label">Quick starts</div>
+            <div class="presets" id="ai-presets">
+              <button type="button" class="preset">Remove rows with empty values</button>
+              <button type="button" class="preset">Drop the temp_id column</button>
+              <button type="button" class="preset">Standardise dates and remove duplicates</button>
+              <button type="button" class="preset">Fill missing emails with "unknown"</button>
+            </div>
+            <div class="field">
+              <label for="ai-input">Your task</label>
+              <textarea class="textarea" id="ai-input" placeholder="Describe your data task in plain language…  e.g. Remove rows where revenue is null and drop the temp_id column"></textarea>
+              <div class="error-msg" id="ai-err"></div>
+            </div>
+            <button class="btn btn-primary btn-block" id="btn-ai-run">✦ Run AI preparation</button>
+          </fieldset>
+          <div id="ai-output"></div>
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<div id="modal-root"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ================= Helpers ================= */
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmt = (n) => Number(n).toLocaleString('en-US');
+  const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const MAX_DATASETS = 5;
+  const nowTime = () => new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+  /* ================= Mock data ================= */
+  const TEMPLATES = {
+    sales: {
+      columns: ['id', 'name', 'email', 'revenue', 'region', 'order_date', 'temp_id'],
+      rows: [
+        [1001, 'Olivia Martin', 'olivia@northwind.io', 1250.5, 'EMEA', '2026-07-02', 'tmp_91a'],
+        [1002, 'Liam Chen', null, 980, 'APAC', '2026-07-03', 'tmp_91b'],
+        [1003, 'Ava Patel', 'ava.patel@globex.com', null, 'NA', '2026-07-03', 'tmp_91c'],
+        [1004, 'Noah Garcia', 'noah@initech.co', 2310.75, null, '2026-07-05', null],
+        [1005, 'Emma Rossi', 'emma.rossi@umbrella.eu', 415, 'EMEA', '07/06/2026', 'tmp_91e'],
+        [1006, 'Lucas Müller', 'lucas@hooli.dev', null, 'EMEA', '2026-07-08', 'tmp_91f'],
+        [1007, 'Mia Johnson', 'mia.j@acme.com', 3120, 'NA', null, 'tmp_920'],
+        [1008, 'Ethan Kim', 'ethan@wayne.co', 760.2, 'APAC', '2026-07-10', 'tmp_921'],
+      ],
+    },
+    leads: {
+      columns: ['lead_id', 'full_name', 'email', 'company', 'status', 'score', 'temp_id'],
+      rows: [
+        ['L-2201', 'Harper Lewis', 'harper@stark.io', 'Stark Industries', 'Qualified', 82, 'x1'],
+        ['L-2202', 'James Wright', null, 'Cyberdyne', 'New', 45, 'x2'],
+        ['L-2203', 'Amelia Scott', 'amelia@tyrell.com', null, 'Contacted', 67, null],
+        ['L-2204', 'Benjamin Hall', 'ben.hall@soylent.co', 'Soylent Corp', 'Qualified', null, 'x4'],
+        ['L-2205', 'Charlotte Young', 'charlotte@oscorp.com', 'Oscorp', 'Lost', 12, 'x5'],
+        ['L-2206', 'Henry Allen', 'henry@vandelay.com', 'Vandelay', null, 58, 'x6'],
+        ['L-2207', 'Evelyn King', 'evelyn@gringotts.uk', 'Gringotts', 'New', 71, 'x7'],
+      ],
+    },
+    customers: {
+      columns: ['customer_id', 'name', 'email', 'country', 'signup_date', 'lifetime_value'],
+      rows: [
+        [501, 'Sofia Alvarez', 'sofia@mail.com', 'Spain', '2025-11-14', 4820],
+        [502, 'Daniel Brooks', 'dan.brooks@mail.com', 'USA', '2025-12-01', null],
+        [503, 'Yuki Tanaka', null, 'Japan', '2026-01-09', 2190.4],
+        [504, 'Arjun Mehta', 'arjun@mail.in', 'India', null, 1530],
+        [505, 'Chloe Dubois', 'chloe@mail.fr', null, '2026-02-22', 890],
+        [506, 'Mateo Silva', 'mateo@mail.br', 'Brazil', '2026-03-03', 3310],
+        [507, 'Grace Okafor', 'grace@mail.ng', 'Nigeria', '2026-03-17', 1275.9],
+      ],
+    },
+    inventory: {
+      columns: ['sku', 'product', 'category', 'stock', 'unit_price', 'updated_at'],
+      rows: [
+        ['SKU-1102', 'Wireless Mouse', 'Accessories', 342, 24.99, '2026-08-01'],
+        ['SKU-1103', 'USB-C Hub', 'Accessories', null, 49.0, '2026-08-01'],
+        ['SKU-2201', '27" Monitor', 'Displays', 58, 329.0, null],
+        ['SKU-2202', 'Laptop Stand', null, 120, 39.5, '2026-08-03'],
+        ['SKU-3301', 'Mechanical Keyboard', 'Peripherals', 0, null, '2026-08-04'],
+        ['SKU-3302', 'Webcam HD', 'Peripherals', 76, 69.99, '2026-08-05'],
+        ['SKU-4401', 'Noise-cancel Headset', 'Audio', 211, 149.0, '2026-08-06'],
+      ],
+    },
+    events: {
+      columns: ['event_id', 'user_id', 'event_type', 'page', 'duration_ms', 'timestamp'],
+      rows: [
+        ['e_7f1', 'u_102', 'page_view', '/pricing', 5321, '2026-09-20T10:02:11Z'],
+        ['e_7f2', 'u_102', 'click', '/pricing', null, '2026-09-20T10:02:19Z'],
+        ['e_7f3', null, 'page_view', '/', 1204, '2026-09-20T10:03:40Z'],
+        ['e_7f4', 'u_331', 'signup', '/signup', 18233, '2026-09-20T10:05:02Z'],
+        ['e_7f5', 'u_331', 'page_view', null, 2210, '2026-09-20T10:05:30Z'],
+        ['e_7f6', 'u_408', 'click', '/docs', 640, null],
+        ['e_7f7', 'u_512', 'page_view', '/blog', 9120, '2026-09-20T10:08:44Z'],
+      ],
+    },
+  };
+
+  const SOURCES = {
+    csv:        { tag: 'CSV',  cls: 'c-csv',  label: 'CSV file',   template: 'sales',     samples: ['sales_data.csv', 'customers_2026.csv'], accept: '.csv,.tsv' },
+    excel:      { tag: 'XLS',  cls: 'c-xls',  label: 'Excel file', template: 'inventory', samples: ['inventory_q3.xlsx', 'budget_forecast.xlsx'], accept: '.xlsx,.xls' },
+    xml:        { tag: 'XML',  cls: 'c-xml',  label: 'XML file',   template: 'inventory', samples: ['product_catalog.xml'], accept: '.xml' },
+    json:       { tag: 'JSON', cls: 'c-json', label: 'JSON file',  template: 'events',    samples: ['web_events.json', 'api_export.json'], accept: '.json,.ndjson' },
+    snowflake:  { tag: 'SNOW', cls: 'c-snow', label: 'Snowflake',  template: 'sales' },
+    salesforce: { tag: 'SF',   cls: 'c-sf',   label: 'Salesforce', template: 'leads' },
+    database:   { tag: 'DB',   cls: 'c-db',   label: 'Database',   template: 'customers' },
+    merge:      { tag: 'JOIN', cls: 'c-merge',label: 'Merged dataset', template: 'sales' },
+  };
+
+  function inferType(values) {
+    const v = values.filter((x) => x !== null && x !== undefined);
+    if (!v.length) return 'str';
+    if (v.every((x) => typeof x === 'number')) return 'num';
+    if (v.every((x) => typeof x === 'string' && /^\d{4}-\d{2}-\d{2}/.test(x))) return 'date';
+    if (v.some((x) => typeof x === 'string' && /^\d{4}-\d{2}-\d{2}/.test(x))) return 'mixed';
+    return 'str';
+  }
+
+  function buildDataset(name, sourceKey, extra) {
+    const src = SOURCES[sourceKey];
+    const tpl = TEMPLATES[(extra && extra.template) || src.template];
+    const rows = rand(1200, 48000);
+    const cols = tpl.columns.map((c, i) => {
+      const vals = tpl.rows.map((r) => r[i]);
+      const nullRatio = vals.filter((x) => x === null).length / vals.length;
+      const nulls = nullRatio ? Math.round(rows * nullRatio * (0.6 + Math.random() * 0.5)) : 0;
+      const type = inferType(vals);
+      const unique = /id$|_id|email|name/.test(c) ? rows - nulls - rand(0, 40) : rand(4, Math.min(900, rows));
+      return { name: c, type, nulls, unique: Math.max(1, unique) };
+    });
+    return {
+      id: 'ds_' + Math.random().toString(36).slice(2, 9),
+      name, source: sourceKey, rows,
+      columns: cols,
+      preview: tpl.rows,
+      nullCount: cols.reduce((a, c) => a + c.nulls, 0),
+      uniqueCount: cols.reduce((a, c) => a + c.unique, 0),
+      status: 'loading',
+      detail: (extra && extra.detail) || src.label,
+      addedAt: nowTime(),
+    };
+  }
+
+  /* ================= State ================= */
+  const initialSettings = () => ({ showNulls: true, showStats: true, exportFormat: 'CSV' });
+  const state = {
+    user: null,
+    datasets: [],
+    selectedId: null,
+    activity: [],
+    settings: initialSettings(),
+    drafts: [],
+    ai: { status: 'idle', steps: [], task: '' },
+  };
+  const initialDrafts = () => [
+    { name: 'Sales cleanup', when: '2 days ago', expires: 5, datasets: 2 },
+    { name: 'Leads merge', when: '5 days ago', expires: 2, datasets: 3 },
+    { name: 'Q3 inventory audit', when: '6 days ago', expires: 1, datasets: 1 },
+  ];
+  const selected = () => state.datasets.find((d) => d.id === state.selectedId && d.status === 'ready') || null;
+
+  /* ================= Toasts ================= */
+  function toast(msg, kind = 'success') {
+    const icons = { success: '✓', info: 'i', warn: '!', error: '✕' };
+    const el = document.createElement('div');
+    el.className = 'toast ' + kind;
+    el.setAttribute('role', 'status');
+    el.innerHTML = `<span class="ti">${icons[kind]}</span><span>${esc(msg)}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 220); }, 3200);
+  }
+
+  /* ================= Activity log ================= */
+  const CAT_LABEL = { import: 'Import', connect: 'Connect', prep: 'Prepare', transform: 'Transform', ai: 'AI', export: 'Export', system: 'Workspace' };
+  // `html` must be built with esc() for any user-provided parts.
+  function log(html, cat = 'system') {
+    state.activity.push({ time: nowTime(), html, cat, fresh: true });
+    renderActivity();
+  }
+  function renderActivity() {
+    const list = $('#activity-list');
+    $('#act-count').textContent = state.activity.length;
+    $('#btn-undo').disabled = !state.activity.length;
+    $('#btn-clear-act').disabled = !state.activity.length;
+    if (!state.activity.length) {
+      list.innerHTML = '<li class="activity-empty" style="display:block">No activity yet. Actions you take in any panel are logged here.</li>';
+      return;
+    }
+    // newest first
+    list.innerHTML = state.activity.slice().reverse().map((a) =>
+      `<li class="${a.fresh ? 'fresh' : ''}"><span class="time">${a.time}</span><span class="cat cat-${a.cat}">${CAT_LABEL[a.cat]}</span><span class="desc">${a.html}</span></li>`
+    ).join('');
+    state.activity.forEach((a) => (a.fresh = false));
+    list.scrollTop = 0;
+  }
+  const code = (s) => `<code>${esc(s)}</code>`;
+
+  /* ================= Auth ================= */
+  function setError(id, msg) {
+    const input = $('#' + id);
+    const err = $('#' + id + '-err');
+    if (err) err.textContent = msg || '';
+    if (input && input.classList.contains('input')) input.classList.toggle('invalid', !!msg);
+    return !msg;
+  }
+  function clearErrors(form) {
+    $$('.error-msg', form.parentElement).forEach((e) => (e.textContent = ''));
+    $$('.invalid', form).forEach((e) => e.classList.remove('invalid'));
+    $$('.form-alert', form.parentElement).forEach((e) => e.classList.remove('show'));
+  }
+  function showAuthView(which) {
+    $('#view-signin').hidden = which !== 'signin';
+    $('#view-signup').hidden = which !== 'signup';
+    const first = which === 'signin' ? '#si-email' : '#su-name';
+    setTimeout(() => $(first).focus(), 0);
+  }
+  $('#to-signup').addEventListener('click', () => showAuthView('signup'));
+  $('#to-signin').addEventListener('click', () => showAuthView('signin'));
+  $('#btn-forgot').addEventListener('click', () => toast('Password reset link sent (demo).', 'info'));
+
+  $$('[data-toggle-pw]').forEach((b) => b.addEventListener('click', () => {
+    const inp = $('#' + b.dataset.togglePw);
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    b.textContent = show ? 'Hide' : 'Show';
+  }));
+
+  // clear an individual field error when the user edits it
+  $$('#auth .input').forEach((inp) => inp.addEventListener('input', () => setError(inp.id, '')));
+  $('#su-terms').addEventListener('change', () => { $('#su-terms-err').textContent = ''; });
+
+  async function withLoading(btn, label, fn) {
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner"></span>${label}`;
+    try { await fn(); } finally { btn.disabled = false; btn.innerHTML = orig; }
+  }
+
+  $('#form-signin').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    clearErrors(form);
+    const email = $('#si-email').value.trim();
+    const pw = $('#si-password').value;
+    let ok = true;
+    if (!email) ok = setError('si-email', 'Email is required.') && ok;
+    else if (!EMAIL_RE.test(email)) ok = setError('si-email', 'Enter a valid email address.') && ok;
+    if (!pw) ok = setError('si-password', 'Password is required.') && ok;
+    if (!ok) { $('.invalid', form)?.focus(); return; }
+    await withLoading($('#btn-signin'), 'Signing in…', () => wait(900));
+    const local = email.split('@')[0].replace(/[._-]+/g, ' ');
+    const name = local.replace(/\b\w/g, (c) => c.toUpperCase());
+    const domain = email.split('@')[1].split('.')[0];
+    enterApp({ name, email, company: domain.charAt(0).toUpperCase() + domain.slice(1) }, 'Signed in');
+  });
+
+  $('#form-signup').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    clearErrors(form);
+    const name = $('#su-name').value.trim();
+    const email = $('#su-email').value.trim();
+    const company = $('#su-company').value.trim();
+    const pw = $('#su-password').value;
+    const pw2 = $('#su-confirm').value;
+    let ok = true;
+    if (!name) ok = setError('su-name', 'Full name is required.') && ok;
+    if (!email) ok = setError('su-email', 'Work email is required.') && ok;
+    else if (!EMAIL_RE.test(email)) ok = setError('su-email', 'Enter a valid email, e.g. jane@company.com.') && ok;
+    if (!pw) ok = setError('su-password', 'Password is required.') && ok;
+    else if (pw.length < 8) ok = setError('su-password', 'Use at least 8 characters.') && ok;
+    if (!pw2) ok = setError('su-confirm', 'Please confirm your password.') && ok;
+    else if (pw && pw !== pw2) ok = setError('su-confirm', 'Passwords do not match.') && ok;
+    if (!$('#su-terms').checked) { $('#su-terms-err').textContent = 'You must accept the Terms and Conditions to continue.'; ok = false; }
+    if (!ok) {
+      const a = $('#signup-alert'); a.textContent = 'Please fix the highlighted fields.'; a.classList.add('show');
+      ($('.invalid', form) || $('#su-terms')).focus();
+      return;
+    }
+    await withLoading($('#btn-signup'), 'Creating account…', () => wait(1100));
+    enterApp({ name, email, company: company || '—' }, 'Account created');
+  });
+
+  $('#open-terms').addEventListener('click', (e) => {
+    e.preventDefault();
+    openModal({
+      title: 'Privacy & data protection',
+      subtitle: 'Terms and Conditions · Data Purge Studio by Byte BX',
+      body: `<div class="terms-body">
+        <h4>1. Your data, your control</h4><p>Datasets you import or connect are processed only to perform the operations you request. We never sell or share your data.</p>
+        <h4>2. Data retention</h4><p>Saved drafts are kept for 7 days and then permanently deleted. Exported files are not stored on our servers.</p>
+        <h4>3. Connections &amp; credentials</h4><p>Credentials for Snowflake, Salesforce and databases are encrypted at rest and can be revoked at any time.</p>
+        <h4>4. AI processing</h4><p>AI features analyse column names and a small sample of rows to suggest operations. You review every step before it is applied.</p>
+        <h4>5. Acceptable use</h4><p>You confirm you have the right to process the data you upload, including any personal data it contains.</p>
+      </div>`,
+      actions: [
+        { label: 'Decline', onClick: (close) => { $('#su-terms').checked = false; close(); } },
+        { label: 'I agree', primary: true, onClick: (close) => { $('#su-terms').checked = true; $('#su-terms-err').textContent = ''; close(); } },
+      ],
+    });
+  });
+
+  function initials(name) {
+    return name.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join('') || 'U';
+  }
+
+  function enterApp(user, verb) {
+    state.user = user;
+    state.datasets = [];
+    state.selectedId = null;
+    state.activity = [];
+    state.settings = initialSettings();
+    state.drafts = initialDrafts();
+    state.ai = { status: 'idle', steps: [], task: '' };
+    $('#tb-name').textContent = user.name;
+    $('#tb-email').textContent = user.email;
+    $('#tb-avatar').textContent = initials(user.name);
+    $('#menu-name').textContent = user.name;
+    $('#menu-email').textContent = user.email;
+    $('#auth').hidden = true;
+    $('#app').hidden = false;
+    $('#ai-input').value = '';
+    switchTab('prep');
+    log(`${esc(verb)} as ${code(user.email)}`, 'system');
+    renderAll();
+    toast(`${verb}. Welcome, ${user.name.split(' ')[0]}!`);
+  }
+
+  function signOut() {
+    closeMenus();
+    closeModal();
+    state.user = null;
+    state.datasets = [];
+    state.selectedId = null;
+    state.activity = [];
+    $('#app').hidden = true;
+    $('#auth').hidden = false;
+    $$('#auth form').forEach((f) => { f.reset(); clearErrors(f); });
+    $$('#auth input[type="text"][id$="password"]').forEach((i) => (i.type = 'password'));
+    $$('[data-toggle-pw]').forEach((b) => (b.textContent = 'Show'));
+    showAuthView('signin');
+    toast('You have been signed out.', 'info');
+  }
+
+  /* ================= Modal ================= */
+  let modalCleanup = null;
+  let lastFocus = null;
+  function openModal({ title, subtitle, body, actions = [], footNote, onMount, width }) {
+    closeModal();
+    lastFocus = document.activeElement;
+    const root = $('#modal-root');
+    root.innerHTML = `<div class="modal-backdrop" data-backdrop>
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" ${width ? `style="max-width:${width}px"` : ''}>
+        <div class="modal-head"><div><h3 id="modal-title">${esc(title)}</h3>${subtitle ? `<p>${esc(subtitle)}</p>` : ''}</div>
+          <button class="modal-close" aria-label="Close" data-close>×</button></div>
+        <div class="modal-body">${body}</div>
+        ${actions.length ? `<div class="modal-foot">${footNote ? `<span class="left">${footNote}</span>` : ''}${actions.map((a, i) =>
+          `<button class="btn ${a.primary ? 'btn-primary' : ''}" data-action="${i}">${esc(a.label)}</button>`).join('')}</div>` : ''}
+      </div></div>`;
+    const back = $('[data-backdrop]', root);
+    back.addEventListener('mousedown', (e) => { if (e.target === back) closeModal(); });
+    $('[data-close]', root).addEventListener('click', closeModal);
+    $$('[data-action]', root).forEach((b) => b.addEventListener('click', () => actions[+b.dataset.action].onClick(closeModal, b)));
+    if (onMount) modalCleanup = onMount($('.modal', root)) || null;
+    const focusable = $('.modal-body input, .modal-body select, .modal-body button, .modal-body [tabindex]', root) || $('[data-action]', root) || $('[data-close]', root);
+    focusable && focusable.focus();
+  }
+  function closeModal() {
+    const root = $('#modal-root');
+    if (!root.innerHTML) return;
+    root.innerHTML = '';
+    if (modalCleanup) { modalCleanup(); modalCleanup = null; }
+    if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
+  }
+
+  /* ================= Menus ================= */
+  function toggleMenu(btn, menu, force) {
+    const open = force !== undefined ? force : menu.hidden;
+    closeMenus();
+    menu.hidden = !open;
+    btn.setAttribute('aria-expanded', String(open));
+    if (open) $('.dd-item', menu)?.focus();
+  }
+  function closeMenus() {
+    [['#btn-menu', '#menu'], ['#btn-export', '#export-menu']].forEach(([b, m]) => {
+      $(m).hidden = true; $(b).setAttribute('aria-expanded', 'false');
+    });
+  }
+  $('#btn-menu').addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(e.currentTarget, $('#menu')); });
+  $('#btn-export').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!selected()) { toast('Select a dataset to export first.', 'warn'); return; }
+    $$('#export-menu [data-export]').forEach((b) => {
+      const cur = b.querySelector('.badge-default'); if (cur) cur.remove();
+      if (b.dataset.export === state.settings.exportFormat) b.insertAdjacentHTML('beforeend', '<span class="badge-default">Default</span>');
+    });
+    toggleMenu(e.currentTarget, $('#export-menu'));
+  });
+  document.addEventListener('click', (e) => { if (!e.target.closest('.dropdown')) closeMenus(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if ($('#modal-root').innerHTML) closeModal();
+      else closeMenus();
+    }
+  });
+  $$('.dropdown').forEach((m) => m.addEventListener('keydown', (e) => {
+    if (!['ArrowDown', 'ArrowUp'].includes(e.key)) return;
+    e.preventDefault();
+    const items = $$('.dd-item', m);
+    const i = items.indexOf(document.activeElement);
+    const next = e.key === 'ArrowDown' ? (i + 1) % items.length : (i - 1 + items.length) % items.length;
+    items[next].focus();
+  }));
+
+  $('#menu-signout').addEventListener('click', signOut);
+  $$('#menu [data-open]').forEach((b) => b.addEventListener('click', () => {
+    closeMenus();
+    ({ account: openAccount, drafts: openDrafts, settings: openSettings })[b.dataset.open]();
+  }));
+
+  function openAccount() {
+    const u = state.user;
+    openModal({
+      title: 'Account', subtitle: 'Overview of your profile',
+      body: `<div class="profile-top"><div class="avatar">${esc(initials(u.name))}</div><div><div class="n">${esc(u.name)}</div><div class="e">${esc(u.email)}</div></div></div>
+        <dl class="kv">
+          <dt>Full name</dt><dd>${esc(u.name)}</dd>
+          <dt>Email</dt><dd>${esc(u.email)}</dd>
+          <dt>Company</dt><dd>${esc(u.company)}</dd>
+          <dt>Role</dt><dd>Workspace owner</dd>
+          <dt>Datasets</dt><dd>${state.datasets.filter((d) => d.status === 'ready').length} of ${MAX_DATASETS} connected</dd>
+        </dl>
+        <div class="plan-box"><span><strong>Team plan</strong> · 14-day trial</span><span>12 days left</span></div>`,
+      actions: [
+        { label: 'Close', onClick: (c) => c() },
+        { label: 'Sign out', primary: true, onClick: () => signOut() },
+      ],
+    });
+  }
+
+  function openDrafts() {
+    const items = state.drafts.map((d, i) => `<li><button class="draft" data-draft="${i}">
+        <span class="ic">🗂</span><span><span class="nm">${esc(d.name)}</span><br><span class="ds">Saved ${esc(d.when)} · ${d.datasets} dataset${d.datasets === 1 ? '' : 's'}</span></span>
+        <span class="exp">Expires in ${d.expires}d</span></button></li>`).join('');
+    openModal({
+      title: 'Saved drafts', subtitle: 'Drafts are kept for 7 days.',
+      body: state.drafts.length ? `<ul class="draft-list">${items}</ul>` : '<p style="color:var(--text-3)">No drafts yet.</p>',
+      actions: [{ label: 'Close', onClick: (c) => c() }],
+      onMount: (m) => {
+        $$('[data-draft]', m).forEach((b) => b.addEventListener('click', () => {
+          const d = state.drafts[+b.dataset.draft];
+          closeModal();
+          log(`Loaded draft ${code(d.name)}`, 'system');
+          toast('Loaded draft (demo).', 'info');
+        }));
+      },
+    });
+  }
+
+  function openSettings() {
+    const s = state.settings;
+    openModal({
+      title: 'Data settings', subtitle: 'Adjust how datasets are displayed on the dashboard.',
+      body: `<div class="setting"><div><div class="t">Show null highlights in table</div><div class="d">Highlight empty cells and columns that contain nulls.</div></div>
+          <label class="switch"><input type="checkbox" id="set-nulls" ${s.showNulls ? 'checked' : ''} aria-label="Show null highlights in table" /><span class="track"></span></label></div>
+        <div class="setting"><div><div class="t">Show column stats</div><div class="d">Show summary cards and per-column type / null ratio.</div></div>
+          <label class="switch"><input type="checkbox" id="set-stats" ${s.showStats ? 'checked' : ''} aria-label="Show column stats" /><span class="track"></span></label></div>
+        <div class="setting"><div><div class="t">Default export format</div><div class="d">Pre-selected when exporting a dataset.</div></div>
+          <select class="select select-sm" id="set-export" style="width:120px">${['CSV', 'Excel', 'JSON', 'XML'].map((f) => `<option ${f === s.exportFormat ? 'selected' : ''}>${f}</option>`).join('')}</select></div>`,
+      actions: [
+        { label: 'Cancel', onClick: (c) => c() },
+        { label: 'Save settings', primary: true, onClick: (c) => {
+          const next = { showNulls: $('#set-nulls').checked, showStats: $('#set-stats').checked, exportFormat: $('#set-export').value };
+          const changes = [];
+          if (next.showNulls !== s.showNulls) changes.push(`null highlights ${next.showNulls ? 'on' : 'off'}`);
+          if (next.showStats !== s.showStats) changes.push(`column stats ${next.showStats ? 'on' : 'off'}`);
+          if (next.exportFormat !== s.exportFormat) changes.push(`default export ${next.exportFormat}`);
+          state.settings = next;
+          c();
+          if (changes.length) { log(`Updated data settings: ${esc(changes.join(', '))}`, 'system'); renderOverview(); }
+          toast('Settings saved.');
+        } },
+      ],
+    });
+  }
+
+  /* ================= Import & Connect ================= */
+  function canAdd() {
+    if (state.datasets.length >= MAX_DATASETS) {
+      toast(`Dataset limit reached (${MAX_DATASETS}). Remove one to add more.`, 'warn');
+      return false;
+    }
+    return true;
+  }
+  function uniqueName(name) {
+    const names = new Set(state.datasets.map((d) => d.name));
+    if (!names.has(name)) return name;
+    const m = name.match(/^(.*?)(\.[^.]+)?$/);
+    let i = 2;
+    while (names.has(`${m[1]} (${i})${m[2] || ''}`)) i++;
+    return `${m[1]} (${i})${m[2] || ''}`;
+  }
+
+  async function addDataset(ds, logHtml, cat, delay) {
+    state.datasets.push(ds);
+    renderDatasets();
+    await wait(delay);
+    // It may have been removed (Clear all / sign out) while "loading".
+    if (!state.datasets.includes(ds)) return;
+    ds.status = 'ready';
+    state.selectedId = ds.id;
+    log(logHtml, cat);
+    renderAll();
+    toast(`${ds.name} is ready.`);
+  }
+
+  function uploadFile(type, fileName) {
+    if (!canAdd()) return;
+    const name = uniqueName(fileName);
+    const ds = buildDataset(name, type);
+    addDataset(ds, `Uploaded file: ${code(name)}`, 'import', rand(1100, 1800));
+  }
+
+  let pendingUploadType = null;
+  $('#file-input').addEventListener('change', (e) => {
+    const f = e.target.files[0];
+    e.target.value = '';
+    if (!f || !pendingUploadType) return;
+    closeModal();
+    uploadFile(pendingUploadType, f.name);
+  });
+
+  $$('[data-upload]').forEach((b) => b.addEventListener('click', () => {
+    const type = b.dataset.upload;
+    const src = SOURCES[type];
+    if (!canAdd()) return;
+    pendingUploadType = type;
+    openModal({
+      title: `Upload ${src.label}`, subtitle: `Accepted: ${src.accept.replace(/,/g, ', ')}`,
+      body: `<div class="dropzone" tabindex="0" role="button" id="dz"><div class="dz-ic">⇪</div><strong>Drop a file here or click to browse</strong><span>Files stay in your browser — nothing is uploaded in this demo.</span></div>
+        <div class="or">or use a sample</div>
+        <div class="sample-list">${src.samples.map((s) => `<button class="sample" data-sample="${esc(s)}"><span class="ext ${src.cls}" style="font-size:9px;font-weight:800;padding:3px 5px;border-radius:4px;color:#fff">${src.tag}</span><span class="nm">${esc(s)}</span><span class="ds">Sample</span></button>`).join('')}</div>`,
+      actions: [{ label: 'Cancel', onClick: (c) => c() }],
+      onMount: (m) => {
+        const dz = $('#dz', m);
+        const fi = $('#file-input');
+        fi.accept = src.accept;
+        dz.addEventListener('click', () => fi.click());
+        dz.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fi.click(); } });
+        dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('drag'); });
+        dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+        dz.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const f = e.dataTransfer.files[0];
+          if (f) { closeModal(); uploadFile(type, f.name); }
+        });
+        $$('[data-sample]', m).forEach((s) => s.addEventListener('click', () => { closeModal(); uploadFile(type, s.dataset.sample); }));
+      },
+    });
+  }));
+
+  const CONNECT_FORMS = {
+    snowflake: {
+      title: 'Connect to Snowflake', subtitle: 'Read a table or view from your warehouse.',
+      fields: [
+        ['name', 'Connection name', 'text', 'analytics_warehouse'],
+        ['account', 'Account identifier', 'text', 'xy12345.eu-west-1'],
+        ['warehouse', 'Warehouse', 'text', 'COMPUTE_WH', true],
+        ['table', 'Database.Schema.Table', 'text', 'SALES.PUBLIC.ORDERS'],
+        ['user', 'Username', 'text', 'svc_datapurge'],
+        ['password', 'Password', 'password', '••••••••'],
+      ],
+      dsName: (v) => (v.table.split('.').pop() || 'orders').toLowerCase(),
+    },
+    salesforce: {
+      title: 'Connect to Salesforce', subtitle: 'Import objects or report results from your org.',
+      fields: [
+        ['name', 'Connection name', 'text', 'sales_org'],
+        ['instance', 'Instance URL', 'text', 'https://acme.my.salesforce.com'],
+        ['object', 'Object', 'select', ['Lead', 'Contact', 'Account', 'Opportunity']],
+        ['user', 'Username', 'text', 'admin@acme.com'],
+        ['token', 'Security token', 'password', '••••••••'],
+      ],
+      dsName: (v) => `${v.object.toLowerCase()}s_dataset`,
+    },
+    database: {
+      title: 'Connect to a database', subtitle: 'Postgres, MySQL, SQL Server and more.',
+      fields: [
+        ['name', 'Connection name', 'text', 'prod_replica'],
+        ['engine', 'Engine', 'select', ['PostgreSQL', 'MySQL', 'SQL Server', 'Oracle']],
+        ['host', 'Host', 'text', 'db.internal.acme.com'],
+        ['port', 'Port', 'text', '5432', true],
+        ['table', 'Table', 'text', 'public.customers'],
+        ['user', 'Username', 'text', 'readonly'],
+        ['password', 'Password', 'password', '••••••••'],
+      ],
+      dsName: (v) => v.table.split('.').pop().toLowerCase(),
+    },
+  };
+
+  $$('[data-connect]').forEach((b) => b.addEventListener('click', () => {
+    const key = b.dataset.connect;
+    if (!canAdd()) return;
+    const cfg = CONNECT_FORMS[key];
+    const fieldsHtml = cfg.fields.map(([id, label, type, ph, optional]) => {
+      const fid = 'cn-' + id;
+      const ctrl = type === 'select'
+        ? `<select class="select" id="${fid}">${ph.map((o) => `<option>${o}</option>`).join('')}</select>`
+        : `<input class="input" id="${fid}" type="${type}" placeholder="${esc(ph)}" autocomplete="off" />`;
+      return `<div class="field"><label for="${fid}">${label}${optional ? ' <span class="optional">(optional)</span>' : ''}</label>${ctrl}<div class="error-msg" id="${fid}-err"></div></div>`;
+    }).join('');
+    openModal({
+      title: cfg.title, subtitle: cfg.subtitle,
+      body: `<form id="connect-form" novalidate>${fieldsHtml}</form>
+        <div class="notice" style="margin:4px 0 0;background:#f1f5f9;border-color:#e2e8f0;color:#475569"><span>🔒</span><span>Demo only — no real connection is made and credentials are not stored.</span></div>`,
+      footNote: `<button type="button" class="btn-link" id="cn-fill" style="font-size:12px">Fill with example values</button>`,
+      actions: [
+        { label: 'Cancel', onClick: (c) => c() },
+        { label: 'Connect', primary: true, onClick: async (close, btn) => {
+          const vals = {};
+          let ok = true;
+          cfg.fields.forEach(([id, label, type, ph, optional]) => {
+            const el = $('#cn-' + id);
+            vals[id] = el.value.trim();
+            if (!optional && !vals[id]) { setError('cn-' + id, `${label} is required.`); ok = false; }
+            else setError('cn-' + id, '');
+          });
+          if (!ok) { $('.modal .invalid')?.focus(); return; }
+          if (!canAdd()) { close(); return; }
+          await withLoading(btn, 'Testing connection…', () => wait(1100));
+          close();
+          const dsName = uniqueName(cfg.dsName(vals) || 'dataset');
+          const ds = buildDataset(dsName, key, { detail: `${SOURCES[key].label} · ${vals.name}` });
+          addDataset(ds, `Connected to ${SOURCES[key].label}: ${code(dsName)} <span style="color:var(--text-3)">via ${esc(vals.name)}</span>`, 'connect', 700);
+        } },
+      ],
+      onMount: (m) => {
+        $$('.input', m).forEach((i) => i.addEventListener('input', () => setError(i.id, '')));
+        $('#cn-fill').addEventListener('click', () => {
+          cfg.fields.forEach(([id, , type, ph]) => {
+            if (type === 'select') return;
+            $('#cn-' + id).value = type === 'password' ? 'demo-secret' : ph;
+            setError('cn-' + id, '');
+          });
+        });
+        $('#connect-form', m).addEventListener('submit', (e) => { e.preventDefault(); $('.modal [data-action="1"]').click(); });
+      },
+    });
+  }));
+
+  function removeDataset(id) {
+    const ds = state.datasets.find((d) => d.id === id);
+    if (!ds) return;
+    state.datasets = state.datasets.filter((d) => d.id !== id);
+    if (state.selectedId === id) state.selectedId = null;
+    if (ds.status === 'ready') log(`Removed dataset ${code(ds.name)}`, 'system');
+    renderAll();
+  }
+
+  $('#btn-clear-all').addEventListener('click', () => {
+    if (!state.datasets.length) return;
+    const n = state.datasets.length;
+    state.datasets = [];
+    state.selectedId = null;
+    log(`Cleared all connected datasets (${n})`, 'system');
+    renderAll();
+    toast('All datasets cleared.', 'info');
+  });
+
+  function renderDatasets() {
+    const list = $('#ds-list');
+    const n = state.datasets.length;
+    $('#ds-count').textContent = `${n} / ${MAX_DATASETS}`;
+    $('#btn-clear-all').disabled = !n;
+    if (!n) {
+      list.innerHTML = '<div class="ds-empty">No datasets yet.<br>Upload a file or connect a source.</div>';
+      return;
+    }
+    list.innerHTML = state.datasets.map((d) => {
+      const src = SOURCES[d.source];
+      const loading = d.status === 'loading';
+      return `<div class="ds-chip ${d.id === state.selectedId && !loading ? 'active' : ''} ${loading ? 'loading' : ''}" role="button" tabindex="${loading ? -1 : 0}"
+          data-ds="${d.id}" aria-pressed="${d.id === state.selectedId}" ${loading ? 'aria-busy="true"' : ''}>
+        <span class="tag ${src.cls}">${src.tag}</span>
+        <span class="meta"><div class="nm" title="${esc(d.name)}">${esc(d.name)}</div>
+          <div class="ds">${loading ? (d.source in CONNECT_FORMS ? 'Connecting…' : 'Uploading…') : `${fmt(d.rows)} rows · ${d.columns.length} cols`}</div></span>
+        ${loading ? '<span class="spinner"></span>' : `<button class="rm" data-rm="${d.id}" aria-label="Remove ${esc(d.name)}" title="Remove">×</button>`}
+      </div>`;
+    }).join('');
+  }
+  $('#ds-list').addEventListener('click', (e) => {
+    const rm = e.target.closest('[data-rm]');
+    if (rm) { e.stopPropagation(); removeDataset(rm.dataset.rm); return; }
+    const chip = e.target.closest('[data-ds]');
+    if (chip) selectDataset(chip.dataset.ds);
+  });
+  $('#ds-list').addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-ds]')) { e.preventDefault(); selectDataset(e.target.dataset.ds); }
+  });
+
+  function selectDataset(id) {
+    const ds = state.datasets.find((d) => d.id === id);
+    if (!ds || ds.status !== 'ready') return;
+    if (state.selectedId === id) return;
+    state.selectedId = id;
+    renderAll();
+    const chip = $(`[data-ds="${id}"]`);
+    chip && chip.focus();
+  }
+
+  /* ================= Overview ================= */
+  function renderOverview() {
+    const ds = selected();
+    const el = $('#overview');
+    $('#crumb-ds').textContent = ds ? ds.name : 'No dataset selected';
+    if (!ds) {
+      el.innerHTML = `<div class="empty-state">
+        <div class="empty-ill">📂</div>
+        <h3>No dataset selected</h3>
+        <p>Import or connect data from the left panel to get started.</p>
+        <div class="empty-actions">
+          <button class="btn btn-primary btn-sm" data-quick="csv">⇪ Try a sample CSV</button>
+          <button class="btn btn-sm" data-quick="salesforce">Connect Salesforce</button>
+        </div></div>`;
+      $('[data-quick="csv"]', el).addEventListener('click', () => uploadFile('csv', 'sales_data.csv'));
+      $('[data-quick="salesforce"]', el).addEventListener('click', () => $('[data-connect="salesforce"]').click());
+      return;
+    }
+    const src = SOURCES[ds.source];
+    const s = state.settings;
+    const colsWithNulls = ds.columns.filter((c) => c.nulls > 0).length;
+    const typeLabel = { num: 'num', str: 'text', date: 'date', mixed: 'mixed' };
+    const statsHtml = s.showStats ? `<div class="stats">
+        <div class="stat"><div class="k">Rows</div><div class="v">${fmt(ds.rows)}</div><div class="s">Previewing ${ds.preview.length}</div></div>
+        <div class="stat"><div class="k">Columns</div><div class="v">${ds.columns.length}</div><div class="s">${ds.columns.filter((c) => c.type === 'num').length} numeric · ${ds.columns.filter((c) => c.type === 'date' || c.type === 'mixed').length} date</div></div>
+        <div class="stat ${ds.nullCount ? 'warn' : ''}"><div class="k">Null values</div><div class="v">${fmt(ds.nullCount)}</div><div class="s">In ${colsWithNulls} of ${ds.columns.length} columns</div></div>
+        <div class="stat"><div class="k">Unique values</div><div class="v">${fmt(ds.uniqueCount)}</div><div class="s">Across all columns</div></div>
+      </div>` : '';
+
+    const head = ds.columns.map((c) => `<th class="${c.nulls ? 'has-null' : ''}"><span class="th-inner">${esc(c.name)} <span class="warn-dot" title="Contains nulls"></span></span></th>`).join('');
+    const statRow = s.showStats ? `<tr class="colstats"><th class="rownum"></th>${ds.columns.map((c) => {
+      const pct = ds.rows ? (c.nulls / ds.rows) * 100 : 0;
+      return `<th><span class="type-badge">${typeLabel[c.type]}</span> <span class="null-bar" title="${pct.toFixed(1)}% null"><i style="width:${Math.min(100, pct * 3)}%"></i></span>${pct ? pct.toFixed(1) + '% null' : '0% null'}</th>`;
+    }).join('')}</tr>` : '';
+    const body = ds.preview.map((r, ri) => `<tr><td class="rownum">${ri + 1}</td>${r.map((v, ci) => {
+      const col = ds.columns[ci];
+      const cls = [col.nulls ? 'col-null' : '', typeof v === 'number' ? 'num' : ''].join(' ').trim();
+      return `<td class="${cls}">${v === null ? '<span class="null-cell">null</span>' : esc(v)}</td>`;
+    }).join('')}</tr>`).join('');
+
+    el.innerHTML = `
+      <div class="ds-header">
+        <div>
+          <div class="ds-title"><span class="tag ${src.cls}">${src.tag}</span><h2>${esc(ds.name)}</h2><span class="pill pill-ok">Ready</span></div>
+          <div class="ds-src">${esc(ds.detail)} · added ${esc(ds.addedAt)}</div>
+        </div>
+        <button class="btn btn-sm" id="btn-overview-cols">View all ${ds.columns.length} columns</button>
+      </div>
+      ${statsHtml}
+      <div class="card">
+        <div class="card-head"><h3>Preview <span class="muted">· first ${ds.preview.length} rows</span></h3>
+          ${s.showNulls ? '<div class="legend"><span><i class="sw" style="background:#ffedd5"></i>Null value</span><span><i class="sw" style="background:#fff7ed;border:1px solid #fed7aa"></i>Column with nulls</span></div>' : ''}
+        </div>
+        <div class="table-wrap ${s.showNulls ? 'show-nulls' : ''}">
+          <table class="preview"><thead><tr><th class="rownum">#</th>${head}</tr>${statRow}</thead><tbody>${body}</tbody></table>
+        </div>
+        <div class="table-foot"><span>Showing ${ds.preview.length} of ${fmt(ds.rows)} rows</span><span>Operations are simulated in this prototype</span></div>
+      </div>`;
+    $('#btn-overview-cols').addEventListener('click', () => openColumns(ds));
+  }
+
+  function openColumns(ds) {
+    const typeLabel = { num: 'Number', str: 'String', date: 'Date', mixed: 'Mixed / Date' };
+    openModal({
+      title: 'Overview', subtitle: `${ds.name} — ${ds.columns.length} columns imported`, width: 560,
+      body: `<div class="table-wrap" style="border:1px solid var(--border);border-radius:8px"><table class="preview">
+        <thead><tr><th>Column</th><th>Type</th><th>Nulls</th><th>Unique</th></tr></thead>
+        <tbody>${ds.columns.map((c) => `<tr><td><strong>${esc(c.name)}</strong></td><td>${typeLabel[c.type]}</td>
+          <td class="num" style="${c.nulls ? 'color:var(--warning);font-weight:600' : ''}">${fmt(c.nulls)}</td><td class="num">${fmt(c.unique)}</td></tr>`).join('')}</tbody></table></div>`,
+      actions: [{ label: 'Close', primary: true, onClick: (c) => c() }],
+    });
+  }
+
+  /* ================= Toolbar ================= */
+  $('#btn-clear-ws').addEventListener('click', () => {
+    if (!state.selectedId) { toast('Workspace is already clear.', 'info'); return; }
+    state.selectedId = null;
+    log('Cleared workspace', 'system');
+    renderAll();
+    toast('Workspace cleared.', 'info');
+  });
+  $('#btn-save-draft').addEventListener('click', () => {
+    const ds = selected();
+    const name = ds ? `${ds.name.replace(/\.[^.]+$/, '')} draft` : 'Untitled workspace';
+    state.drafts.unshift({ name, when: 'just now', expires: 7, datasets: state.datasets.filter((d) => d.status === 'ready').length });
+    log('Saved current workspace as draft', 'system');
+    toast('Draft saved (demo). Drafts are kept for 7 days.');
+    renderMenuCounts();
+  });
+  $$('#export-menu [data-export]').forEach((b) => b.addEventListener('click', () => {
+    const f = b.dataset.export;
+    const ds = selected();
+    closeMenus();
+    if (!ds) return;
+    log(`Exported dataset ${code(ds.name)} as ${esc(f)}`, 'export');
+    toast(`Exported dataset as ${f} (demo).`);
+  }));
+
+  $('#btn-undo').addEventListener('click', () => {
+    const last = state.activity.pop();
+    if (!last) return;
+    renderActivity();
+    const tmp = document.createElement('div'); tmp.innerHTML = last.html;
+    toast(`Undid: ${tmp.textContent}`, 'info');
+  });
+  $('#btn-clear-act').addEventListener('click', () => {
+    state.activity = [];
+    renderActivity();
+    toast('Activity cleared.', 'info');
+  });
+
+  function renderMenuCounts() { $('#menu-draft-count').textContent = state.drafts.length; }
+
+  /* ================= Tabs ================= */
+  const TAB_DESC = {
+    prep: 'Collect, clean and consolidate raw data.',
+    transform: 'Change the format, structure or values of the data.',
+    ai: 'Describe a task in plain language — AI does the rest.',
+  };
+  function switchTab(key) {
+    $$('.tab').forEach((t) => {
+      const on = t.dataset.tab === key;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      $('#' + t.getAttribute('aria-controls')).hidden = !on;
+    });
+    $('#tab-desc').textContent = TAB_DESC[key];
+  }
+  $$('.tab').forEach((t) => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+  $('.tabs').addEventListener('keydown', (e) => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+    const tabs = $$('.tab');
+    const i = tabs.indexOf(document.activeElement);
+    const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+    n.focus(); switchTab(n.dataset.tab);
+  });
+
+  /* ================= Operations ================= */
+  function renderOps() {
+    const ds = selected();
+    $('#ops-notice').hidden = !!ds;
+    $$('[data-needs-ds]').forEach((f) => (f.disabled = !ds));
+    const cols = ds ? ds.columns.map((c) => c.name) : [];
+    $$('select[data-cols]').forEach((sel) => {
+      const prev = sel.value;
+      sel.innerHTML = cols.length ? cols.map((c) => `<option>${esc(c)}</option>`).join('') : '<option>—</option>';
+      if (cols.includes(prev)) sel.value = prev;
+    });
+    // sensible defaults
+    if (ds) {
+      const pick = (sel, pref) => { const hit = pref.find((p) => cols.includes(p)); if (hit && !sel.dataset.touched) sel.value = hit; };
+      pick($('#rc-col'), ['temp_id']);
+      pick($('#rn-col'), ['revenue', 'email', 'score', 'lifetime_value', 'stock', 'duration_ms']);
+      pick($('#rp-col'), ['email']);
+      pick($('#ty-col'), ['revenue', 'score', 'lifetime_value', 'unit_price', 'duration_ms']);
+      pick($('#fm-col'), ['order_date', 'signup_date', 'updated_at', 'timestamp']);
+      pick($('#sp-col'), ['email', 'full_name', 'name']);
+    }
+    const others = state.datasets.filter((d) => d.status === 'ready' && d.id !== state.selectedId);
+    const mg = $('#mg-ds');
+    const prevMg = mg.value;
+    mg.innerHTML = others.length ? others.map((d) => `<option value="${d.id}">${esc(d.name)}</option>`).join('') : '<option value="">Connect another dataset first</option>';
+    if (others.some((d) => d.id === prevMg)) mg.value = prevMg;
+    $('[data-op="merge"] button[type="submit"]').disabled = !ds || !others.length;
+    // clear stale inline messages
+    $$('.op-msg').forEach((m) => { m.classList.remove('show'); });
+  }
+  $$('select[data-cols]').forEach((s) => s.addEventListener('change', () => (s.dataset.touched = '1')));
+
+  $$('input[name="rn-mode"]').forEach((r) => r.addEventListener('change', () => { $('#rn-col-field').hidden = $('input[name="rn-mode"]:checked').value !== 'column'; }));
+  $$('input[name="rp-mode"]').forEach((r) => r.addEventListener('change', () => {
+    const m = $('input[name="rp-mode"]:checked').value;
+    $('#rp-rename').hidden = m !== 'rename';
+    $('#rp-replace').hidden = m !== 'replace';
+  }));
+
+  function opFeedback(form, msg, isErr) {
+    const m = $('.op-msg', form);
+    m.textContent = msg;
+    m.classList.toggle('err', !!isErr);
+    m.classList.add('show');
+    clearTimeout(m._t);
+    m._t = setTimeout(() => m.classList.remove('show'), 2600);
+  }
+
+  const OPS = {
+    'remove-col': () => {
+      const col = $('#rc-col').value;
+      return { html: `Removed column: ${code(col)}`, cat: 'prep' };
+    },
+    'remove-nulls': () => {
+      const mode = $('input[name="rn-mode"]:checked').value;
+      if (mode === 'any') return { html: 'Removed all rows that contain any null value', cat: 'prep' };
+      return { html: `Removed rows where ${code($('#rn-col').value)} is null`, cat: 'prep' };
+    },
+    replace: () => {
+      const mode = $('input[name="rp-mode"]:checked').value;
+      if (mode === 'rename') {
+        const oldC = $('#rp-old-col').value, newC = $('#rp-new-col').value.trim();
+        if (!newC) return { error: 'Enter a new column name.', focus: '#rp-new-col' };
+        if (!/^[A-Za-z_][\w ]*$/.test(newC)) return { error: 'Use letters, numbers or _ only.', focus: '#rp-new-col' };
+        if (newC === oldC) return { error: 'New name matches the old one.', focus: '#rp-new-col' };
+        $('#rp-new-col').value = '';
+        return { html: `Renamed column ${code(oldC)} to ${code(newC)}`, cat: 'prep' };
+      }
+      const col = $('#rp-col').value;
+      const oldV = $('#rp-old-val').value.trim(), newV = $('#rp-new-val').value.trim();
+      if (!oldV) return { error: 'Enter the value to replace.', focus: '#rp-old-val' };
+      if (!newV) return { error: 'Enter a replacement value.', focus: '#rp-new-val' };
+      const what = /^(null|empty|blank)$/i.test(oldV) ? 'Replaced nulls' : `Replaced ${code(oldV)}`;
+      return { html: `${what} in column ${code(col)} with ${code(newV)}`, cat: 'prep' };
+    },
+    merge: () => {
+      const other = state.datasets.find((d) => d.id === $('#mg-ds').value);
+      if (!other) return { error: 'Connect a second dataset first.' };
+      const ds = selected();
+      return { html: `Merged ${code(ds.name)} with ${code(other.name)} (${esc($('#mg-type').value)} join on ${code($('#mg-key').value)})`, cat: 'prep' };
+    },
+    type: () => ({ html: `Changed type of column ${code($('#ty-col').value)} to ${esc($('#ty-type').value)}`, cat: 'transform' }),
+    format: () => ({ html: `Formatted column ${code($('#fm-col').value)} as ${esc($('#fm-type').value)}`, cat: 'transform' }),
+    split: () => {
+      const d = $('#sp-delim').value;
+      if (!d) return { error: 'Enter a delimiter.', focus: '#sp-delim' };
+      const shown = d === ' ' ? 'space' : d;
+      return { html: `Split column ${code($('#sp-col').value)} by ${code(shown)} (kept ${esc($('#sp-parts').value)})`, cat: 'transform' };
+    },
+  };
+
+  $$('form.op').forEach((form) => form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!selected()) { toast('Select a dataset first.', 'warn'); return; }
+    const res = OPS[form.dataset.op]();
+    if (res.error) {
+      opFeedback(form, res.error, true);
+      if (res.focus) $(res.focus).focus();
+      return;
+    }
+    log(res.html, res.cat);
+    opFeedback(form, '✓ Applied (demo)');
+    toast(res.cat === 'transform' ? 'Transformation applied (demo).' : 'Preparation step applied (demo).');
+  }));
+
+  /* ================= AI (mock) ================= */
+  $$('#ai-presets .preset').forEach((p) => p.addEventListener('click', () => {
+    $('#ai-input').value = p.textContent;
+    $('#ai-err').textContent = '';
+    $('#ai-input').focus();
+  }));
+  $('#ai-input').addEventListener('input', () => { $('#ai-err').textContent = ''; });
+  $('#ai-input').addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) $('#btn-ai-run').click(); });
+
+  function planSteps(text, ds) {
+    const t = text.toLowerCase();
+    const cols = ds.columns.map((c) => c.name);
+    // Whole-word column matches, so `id` doesn't match inside `temp_id`.
+    const colsIn = (s) => cols.filter((c) => new RegExp(`(^|[^\\w])(${c}|${c.replace(/_/g, ' ')})(?![\\w])`).test(s));
+    const mentioned = colsIn(t);
+    const clauses = t.split(/\s*(?:\band\b|\bthen\b|[,;.])\s*/).filter(Boolean);
+    const nullCols = ds.columns.filter((c) => c.nulls).map((c) => c.name);
+    const numCol = ds.columns.find((c) => c.type === 'num' && !/id$/.test(c.name))?.name;
+    const dateCol = ds.columns.find((c) => c.type === 'date' || c.type === 'mixed')?.name;
+    const textCol = ds.columns.find((c) => /email/.test(c.name))?.name || ds.columns.find((c) => c.type === 'str')?.name;
+    const steps = [];
+    const add = (kind, html, cat = 'ai') => { if (!steps.some((s) => s.html === html)) steps.push({ kind, html, cat }); };
+
+    const NULL_RE = /(null|empty|missing|blank|nan)/;
+    const FILL_RE = /(fill|replace|impute|default)/;
+    const DROP_RE = /\b(drop|delete)\b|\bremove\b[^,;.]*\bcolumns?\b/;
+    const valMatch = text.match(/["'“]([^"'”]+)["'”]/);
+
+    clauses.forEach((cl) => {
+      const here = colsIn(cl);
+      if (FILL_RE.test(cl) && NULL_RE.test(cl)) {
+        const target = here.find((c) => nullCols.includes(c)) || here[0] || textCol;
+        add('Replace', `Replace nulls in ${code(target)} with ${code(valMatch ? valMatch[1] : 'unknown')}`);
+      } else if (NULL_RE.test(cl)) {
+        if (here.length) here.slice(0, 2).forEach((c) => add('Clean', `Remove rows where ${code(c)} is null`));
+        else add('Clean', 'Remove rows that contain any null value');
+      } else if (DROP_RE.test(cl)) {
+        const dropCols = here.length ? here : cols.filter((c) => /temp|tmp/.test(c));
+        dropCols.slice(0, 2).forEach((c) => add('Drop', `Drop column ${code(c)}`));
+      }
+    });
+    if (/(dup|duplicate|dedup)/.test(t)) add('Clean', `Remove duplicate rows (key: ${code(cols[0])})`);
+    if (/(date|standardi[sz]e|iso)/.test(t) && dateCol) add('Format', `Format ${code(dateCol)} as ${code('YYYY-MM-DD')}`);
+    if (/(currency|money|\$|price format)/.test(t) && numCol) add('Format', `Format ${code(numCol)} as currency (USD)`);
+    if (/(number|numeric|integer|cast|type)/.test(t) && numCol) add('Type', `Change type of ${code(mentioned.find((c) => c !== 'temp_id') || numCol)} to Number`);
+    if (/(trim|whitespace|spaces)/.test(t)) add('Format', `Trim whitespace in all text columns`);
+    if (/(lower|upper|case)/.test(t) && textCol) add('Format', `Convert ${code(textCol)} to lowercase`);
+    if (/(split|extract|domain)/.test(t) && textCol) add('Split', `Split ${code(textCol)} by ${code('@')} into two columns`);
+    if (/(rename)/.test(t) && mentioned[0]) add('Rename', `Rename column ${code(mentioned[0])} to ${code(mentioned[0] + '_clean')}`);
+
+    // Generic fallback so the AI always has something useful to say.
+    if (steps.length < 2) {
+      if (nullCols.length) add('Clean', `Remove rows where ${code(nullCols[0])} is null`);
+      if (steps.length < 2 && textCol) add('Replace', `Replace nulls in ${code(textCol)} with ${code('unknown')}`);
+      if (steps.length < 2 && dateCol) add('Format', `Format ${code(dateCol)} as ${code('YYYY-MM-DD')}`);
+      if (steps.length < 2) add('Clean', `Remove duplicate rows (key: ${code(cols[0])})`);
+    }
+    return steps.slice(0, 4);
+  }
+
+  function renderAI() {
+    const out = $('#ai-output');
+    const ai = state.ai;
+    if (ai.status === 'loading') {
+      out.innerHTML = '<div class="ai-status"><span class="spinner"></span>AI is analyzing your data…</div>';
+    } else if (ai.status === 'ready' || ai.status === 'applied') {
+      const applied = ai.status === 'applied';
+      out.innerHTML = `<div class="suggestions">
+        <h5><span>AI suggestions</span><span>${ai.steps.length} steps</span></h5>
+        <ol class="sugg-list">${ai.steps.map((s, i) => `<li class="${applied ? 'done' : ''}"><span class="n">${applied ? '✓' : i + 1}</span><span>${s.html}<span class="k">${esc(s.kind)}</span></span></li>`).join('')}</ol>
+        ${applied
+          ? '<div class="ai-success">✓ All suggested steps applied (demo). See the Activity panel.</div>'
+          : `<div style="display:flex;gap:8px"><button class="btn btn-primary btn-sm" id="btn-ai-apply" style="flex:1">Apply all suggested steps</button><button class="btn btn-sm" id="btn-ai-discard">Discard</button></div>`}
+      </div>`;
+      if (!applied) {
+        $('#btn-ai-apply').addEventListener('click', applyAI);
+        $('#btn-ai-discard').addEventListener('click', () => { state.ai = { status: 'idle', steps: [], task: '' }; renderAI(); });
+      }
+    } else {
+      out.innerHTML = '';
+    }
+  }
+
+  let aiRun = 0;
+  $('#btn-ai-run').addEventListener('click', async () => {
+    const ds = selected();
+    if (!ds) { toast('Select a dataset first.', 'warn'); return; }
+    const text = $('#ai-input').value.trim();
+    if (!text) { $('#ai-err').textContent = 'Describe what you want to do with your data.'; $('#ai-input').focus(); return; }
+    if (text.length < 6) { $('#ai-err').textContent = 'Add a little more detail so AI can understand the task.'; $('#ai-input').focus(); return; }
+    const run = ++aiRun;
+    state.ai = { status: 'loading', steps: [], task: text, dsId: ds.id };
+    renderAI();
+    const btn = $('#btn-ai-run');
+    await withLoading(btn, 'Analyzing…', () => wait(rand(1100, 1800)));
+    if (run !== aiRun || !selected() || selected().id !== ds.id) return;
+    state.ai = { status: 'ready', steps: planSteps(text, ds), task: text, dsId: ds.id };
+    renderAI();
+  });
+
+  function applyAI() {
+    const ai = state.ai;
+    const ds = selected();
+    if (!ds || ai.dsId !== ds.id) { toast('Dataset changed — run AI again.', 'warn'); return; }
+    log(`AI task: “${esc(ai.task)}”`, 'ai');
+    ai.steps.forEach((s) => log(`AI · ${s.html}`, 'ai'));
+    ai.status = 'applied';
+    renderAI();
+    toast(`Applied ${ai.steps.length} AI steps to ${ds.name} (demo).`);
+  }
+
+  /* ================= Render all ================= */
+  let lastSelected = null;
+  function renderAll() {
+    renderDatasets();
+    renderOverview();
+    renderOps();
+    renderActivity();
+    renderMenuCounts();
+    // reset AI output when the selected dataset changes
+    if (state.selectedId !== lastSelected) {
+      lastSelected = state.selectedId;
+      aiRun++;
+      state.ai = { status: 'idle', steps: [], task: '' };
+      renderAI();
+      $$('select[data-cols]').forEach((s) => delete s.dataset.touched);
+      renderOps();
+    }
+  }
+
+  // Initial view
+  showAuthView('signin');
+})();
+</script>
+</body>
+</html>
