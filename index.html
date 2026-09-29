@@ -637,7 +637,7 @@
       <!-- Sign In -->
       <section id="view-signin" class="auth-card" aria-labelledby="signin-title">
         <h1 id="signin-title">Sign in</h1>
-        <p class="subtitle">Welcome back. Sign in to your workspace.</p>
+        <p class="subtitle">Sign in to pick up where you left off.</p>
         <div class="form-alert" id="signin-alert" role="alert"></div>
         <form id="form-signin" novalidate>
           <div class="field">
@@ -665,7 +665,7 @@
       <!-- Sign Up -->
       <section id="view-signup" class="auth-card" aria-labelledby="signup-title" hidden>
         <h1 id="signup-title">Create account</h1>
-        <p class="subtitle">Start cleaning and preparing data in minutes.</p>
+        <p class="subtitle">It’s free and takes about a minute.</p>
         <div class="form-alert" id="signup-alert" role="alert"></div>
         <form id="form-signup" novalidate>
           <div class="field">
@@ -694,7 +694,7 @@
               <div class="error-msg" id="su-confirm-err"></div>
             </div>
           </div>
-          <label class="checkbox"><input type="checkbox" id="su-terms" /> <span>I accept the <button type="button" class="btn-link" id="open-terms">Terms and Conditions</button> and Privacy &amp; data protection notice.</span></label>
+          <label class="checkbox"><input type="checkbox" id="su-terms" /> <span>I agree to the <button type="button" class="btn-link" id="open-terms">Terms and Conditions</button> and the Privacy notice.</span></label>
           <div class="error-msg" id="su-terms-err" style="margin-top:6px"></div>
           <button type="submit" class="btn btn-primary btn-block" id="btn-signup" style="height:40px;margin-top:18px">Create account</button>
         </form>
@@ -702,7 +702,7 @@
       </section>
     </div>
 
-    <div class="auth-legal">© 2026 Byte BX. Prototype — no real data leaves your browser.</div>
+    <div class="auth-legal">© 2026 Byte BX. This is a prototype, so nothing you enter leaves your browser.</div>
   </div>
 
   <aside class="auth-right" aria-roledescription="carousel" aria-label="Data Purge Studio features">
@@ -713,7 +713,7 @@
         <section class="fc-slide is-active" aria-roledescription="slide" aria-label="1 of 6">
           <span class="fc-tag">Welcome</span>
           <h2>Welcome to Data Purge Studio</h2>
-          <p class="lead">A unified workspace to clean, transform and prepare data — from raw files and live sources to analysis-ready datasets.</p>
+          <p class="lead">Bring your data in, clean it up and send it on, without juggling spreadsheets and scripts.</p>
           <div class="fc-visual">
             <div class="fc-pillars">
               <span><b>⇪</b>Import</span><i>→</i><span><b>✦</b>Clean</span><i>→</i><span><b>◎</b>AI</span><i>→</i><span><b>⇩</b>Export</span>
@@ -722,9 +722,9 @@
         </section>
 
         <section class="fc-slide" aria-roledescription="slide" aria-label="2 of 6">
-          <span class="fc-tag">Import &amp; connect</span>
-          <h2>Every source in one workspace</h2>
-          <p class="lead">Upload CSV, Excel, XML or JSON files, or connect Snowflake, Salesforce and your databases in a few clicks.</p>
+          <span class="fc-tag">Import</span>
+          <h2>Start with the data you have</h2>
+          <p class="lead">Upload CSV, Excel, XML or JSON files, or connect to Snowflake, Salesforce or your own database.</p>
           <div class="fc-visual">
             <div class="fc-chips">
               <span style="--c:#10b981">CSV</span><span style="--c:#15803d">Excel</span><span style="--c:#f59e0b">XML</span><span style="--c:#7c3aed">JSON</span>
@@ -734,9 +734,9 @@
         </section>
 
         <section class="fc-slide" aria-roledescription="slide" aria-label="3 of 6">
-          <span class="fc-tag">Prepare</span>
-          <h2>Fix messy data in one click</h2>
-          <p class="lead">Remove empty rows and duplicates, rename columns and replace values — no formulas or scripts.</p>
+          <span class="fc-tag">Cleaning</span>
+          <h2>Spot problems at a glance</h2>
+          <p class="lead">Empty rows, duplicates and odd values are flagged as soon as your data loads. Fixing them takes one click.</p>
           <div class="fc-visual">
             <div class="fc-table">
               <div><span>1001</span><span>Olivia Martin</span><span>$1,250</span></div>
@@ -744,24 +744,24 @@
               <div><span>1003</span><span>Ava Patel</span><span>$2,310</span></div>
               <div class="x"><span>1003</span><span>Ava Patel</span><span>dup</span></div>
             </div>
-            <div class="fc-note">✓ 2 rows removed · 4 clean rows left</div>
+            <div class="fc-note">2 rows removed, 4 left</div>
           </div>
         </section>
 
         <section class="fc-slide" aria-roledescription="slide" aria-label="4 of 6">
-          <span class="fc-tag">AI preparation</span>
-          <h2>Describe it. AI does it.</h2>
-          <p class="lead">Type what you need in plain language. AI suggests the steps, you review them, then apply them all at once.</p>
+          <span class="fc-tag">AI assist</span>
+          <h2>Ask for what you need</h2>
+          <p class="lead">Describe the change in plain English. You’ll see the steps first and decide whether to apply them.</p>
           <div class="fc-visual">
-            <div class="fc-bubble">Drop rows where revenue is empty and remove temp_id</div>
+            <div class="fc-bubble">Remove rows with no revenue and drop temp_id</div>
             <ul class="fc-steps"><li>Remove 2 rows where <code>revenue</code> is null</li><li>Drop column <code>temp_id</code></li></ul>
           </div>
         </section>
 
         <section class="fc-slide" aria-roledescription="slide" aria-label="5 of 6">
-          <span class="fc-tag">Transform &amp; track</span>
-          <h2>Every change, on the record</h2>
-          <p class="lead">Change types, format dates and currency, split columns — and see each step in the activity log, ready to undo.</p>
+          <span class="fc-tag">History</span>
+          <h2>Nothing is permanent</h2>
+          <p class="lead">Each change you make is saved in the activity log, so you can see what happened and undo it.</p>
           <div class="fc-visual">
             <ul class="fc-log">
               <li><time>9:14</time>Formatted <code>revenue</code> as USD</li>
@@ -773,8 +773,8 @@
 
         <section class="fc-slide" aria-roledescription="slide" aria-label="6 of 6">
           <span class="fc-tag">Export</span>
-          <h2>Send clean data anywhere</h2>
-          <p class="lead">Export as CSV, Excel, JSON or XML, or push it back to your tools. Drafts are kept for 7 days.</p>
+          <h2>Take it with you</h2>
+          <p class="lead">Download it as CSV, Excel, JSON or XML, or send it back to Salesforce. Drafts are kept for 7 days.</p>
           <div class="fc-visual">
             <div class="fc-chips export">
               <span style="--c:#10b981">⇩ CSV</span><span style="--c:#15803d">⇩ Excel</span><span style="--c:#7c3aed">⇩ JSON</span><span style="--c:#f59e0b">⇩ XML</span><span style="--c:#2563eb">→ Salesforce</span>
@@ -785,7 +785,7 @@
 
     </div>
 
-    <div class="quote">Your data, your control — every action is logged and reversible.</div>
+    <div class="quote">Made by Byte BX</div>
   </aside>
 </div>
 
@@ -800,7 +800,7 @@
           <div class="brand-sub">Byte BX</div>
         </div>
       </div>
-      <div class="tagline">A unified workspace to clean, transform and prepare data.</div>
+      <div class="tagline">Clean, reshape and export your data.</div>
     </div>
     <div class="topbar-right">
       <div class="user-meta"><div class="n" id="tb-name"></div><div class="e" id="tb-email"></div></div>
@@ -822,7 +822,7 @@
     <aside class="panel-left" aria-label="Import and connect">
       <div>
         <h2 class="pl-title">Import &amp; Connect</h2>
-        <p class="pl-sub">Bring data in from files or live sources.</p>
+        <p class="pl-sub">Upload a file or connect a source.</p>
       </div>
 
       <section>
@@ -899,11 +899,11 @@
           <button class="tab" role="tab" aria-selected="false" aria-controls="tab-transform" id="t-transform" data-tab="transform" tabindex="-1">Transformation</button>
           <button class="tab" role="tab" aria-selected="false" aria-controls="tab-ai" id="t-ai" data-tab="ai" tabindex="-1">✦ AI</button>
         </div>
-        <p class="tab-desc" id="tab-desc">Collect, clean and consolidate raw data.</p>
+        <p class="tab-desc" id="tab-desc">Tidy up rows, columns and values.</p>
       </div>
 
       <div class="pr-body">
-        <div class="notice" id="ops-notice"><span>ⓘ</span><span>Select a dataset from the left panel to enable operations.</span></div>
+        <div class="notice" id="ops-notice"><span>ⓘ</span><span>Pick a dataset on the left to get started.</span></div>
 
         <!-- Preparation -->
         <div role="tabpanel" id="tab-prep" aria-labelledby="t-prep">
@@ -1015,11 +1015,11 @@
         <!-- AI -->
         <div role="tabpanel" id="tab-ai" aria-labelledby="t-ai" hidden>
           <div class="ai-hero">
-            <h4>✦ AI data preparation</h4>
-            <p>Describe your data task in plain language. AI identifies the relevant operations and runs them for you.</p>
+            <h4>Ask AI</h4>
+            <p>Tell it what you want done. It suggests the steps, and you choose whether to apply them.</p>
           </div>
           <fieldset class="op-fieldset" data-needs-ds>
-            <div class="label">Quick starts</div>
+            <div class="label">Try one of these</div>
             <div class="presets" id="ai-presets">
               <button type="button" class="preset">Remove rows with empty values</button>
               <button type="button" class="preset">Drop the temp_id column</button>
@@ -1031,7 +1031,7 @@
               <textarea class="textarea" id="ai-input" placeholder="Describe your data task in plain language…  e.g. Remove rows where revenue is null and drop the temp_id column"></textarea>
               <div class="error-msg" id="ai-err"></div>
             </div>
-            <button class="btn btn-primary btn-block" id="btn-ai-run">✦ Run AI preparation</button>
+            <button class="btn btn-primary btn-block" id="btn-ai-run">Suggest steps</button>
           </fieldset>
           <div id="ai-output"></div>
         </div>
@@ -1243,7 +1243,7 @@
   }
   $('#to-signup').addEventListener('click', () => showAuthView('signup'));
   $('#to-signin').addEventListener('click', () => showAuthView('signin'));
-  $('#btn-forgot').addEventListener('click', () => toast('Password reset link sent (demo).', 'info'));
+  $('#btn-forgot').addEventListener('click', () => toast('We’ve sent you a reset link.', 'info'));
 
   $$('[data-toggle-pw]').forEach((b) => b.addEventListener('click', () => {
     const inp = $('#' + b.dataset.togglePw);
@@ -1478,7 +1478,7 @@
           const d = state.drafts[+b.dataset.draft];
           closeModal();
           log(`Loaded draft ${code(d.name)}`, 'system');
-          toast('Loaded draft (demo).', 'info');
+          toast('Draft loaded.', 'info');
         }));
       },
     });
@@ -1744,7 +1744,7 @@
       el.innerHTML = `<div class="empty-state">
         <div class="empty-ill">📂</div>
         <h3>No dataset selected</h3>
-        <p>Import or connect data from the left panel to get started.</p>
+        <p>Upload a file or connect a source on the left to get started.</p>
         <div class="empty-actions">
           <button class="btn btn-primary btn-sm" data-quick="csv">⇪ Try a sample CSV</button>
           <button class="btn btn-sm" data-quick="salesforce">Connect Salesforce</button>
@@ -1821,7 +1821,7 @@
     const name = ds ? `${ds.name.replace(/\.[^.]+$/, '')} draft` : 'Untitled workspace';
     state.drafts.unshift({ name, when: 'just now', expires: 7, datasets: state.datasets.filter((d) => d.status === 'ready').length });
     log('Saved current workspace as draft', 'system');
-    toast('Draft saved (demo). Drafts are kept for 7 days.');
+    toast('Draft saved. We’ll keep it for 7 days.');
     renderMenuCounts();
   });
   $$('#export-menu [data-export]').forEach((b) => b.addEventListener('click', () => {
@@ -1830,7 +1830,7 @@
     closeMenus();
     if (!ds) return;
     log(`Exported dataset ${code(ds.name)} as ${esc(f)}`, 'export');
-    toast(`Exported dataset as ${f} (demo).`);
+    toast(`Exported ${ds.name} as ${f}.`);
   }));
 
   $('#btn-undo').addEventListener('click', () => {
@@ -1850,9 +1850,9 @@
 
   /* ================= Tabs ================= */
   const TAB_DESC = {
-    prep: 'Collect, clean and consolidate raw data.',
-    transform: 'Change the format, structure or values of the data.',
-    ai: 'Describe a task in plain language — AI does the rest.',
+    prep: 'Tidy up rows, columns and values.',
+    transform: 'Change types, formats and structure.',
+    ai: 'Describe what you need and review the steps.',
   };
   function switchTab(key) {
     $$('.tab').forEach((t) => {
@@ -1973,8 +1973,8 @@
       return;
     }
     log(res.html, res.cat);
-    opFeedback(form, '✓ Applied (demo)');
-    toast(res.cat === 'transform' ? 'Transformation applied (demo).' : 'Preparation step applied (demo).');
+    opFeedback(form, '✓ Applied');
+    toast('Change applied.');
   }));
 
   /* ================= AI (mock) ================= */
@@ -2041,15 +2041,15 @@
     const out = $('#ai-output');
     const ai = state.ai;
     if (ai.status === 'loading') {
-      out.innerHTML = '<div class="ai-status"><span class="spinner"></span>AI is analyzing your data…</div>';
+      out.innerHTML = '<div class="ai-status"><span class="spinner"></span>Looking at your data…</div>';
     } else if (ai.status === 'ready' || ai.status === 'applied') {
       const applied = ai.status === 'applied';
       out.innerHTML = `<div class="suggestions">
-        <h5><span>AI suggestions</span><span>${ai.steps.length} steps</span></h5>
+        <h5><span>Suggested steps</span><span>${ai.steps.length} steps</span></h5>
         <ol class="sugg-list">${ai.steps.map((s, i) => `<li class="${applied ? 'done' : ''}"><span class="n">${applied ? '✓' : i + 1}</span><span>${s.html}<span class="k">${esc(s.kind)}</span></span></li>`).join('')}</ol>
         ${applied
-          ? '<div class="ai-success">✓ All suggested steps applied (demo). See the Activity panel.</div>'
-          : `<div style="display:flex;gap:8px"><button class="btn btn-primary btn-sm" id="btn-ai-apply" style="flex:1">Apply all suggested steps</button><button class="btn btn-sm" id="btn-ai-discard">Discard</button></div>`}
+          ? '<div class="ai-success">All steps applied. You’ll find them under Activity.</div>'
+          : `<div style="display:flex;gap:8px"><button class="btn btn-primary btn-sm" id="btn-ai-apply" style="flex:1">Apply these steps</button><button class="btn btn-sm" id="btn-ai-discard">Discard</button></div>`}
       </div>`;
       if (!applied) {
         $('#btn-ai-apply').addEventListener('click', applyAI);
@@ -2080,12 +2080,12 @@
   function applyAI() {
     const ai = state.ai;
     const ds = selected();
-    if (!ds || ai.dsId !== ds.id) { toast('Dataset changed — run AI again.', 'warn'); return; }
+    if (!ds || ai.dsId !== ds.id) { toast('The dataset changed. Run it again.', 'warn'); return; }
     log(`AI task: “${esc(ai.task)}”`, 'ai');
     ai.steps.forEach((s) => log(`AI · ${s.html}`, 'ai'));
     ai.status = 'applied';
     renderAI();
-    toast(`Applied ${ai.steps.length} AI steps to ${ds.name} (demo).`);
+    toast(`Applied ${ai.steps.length} steps to ${ds.name}.`);
   }
 
   /* ================= Render all ================= */
