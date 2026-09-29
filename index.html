@@ -171,6 +171,56 @@
   .feature-list span { color: #94a3b8; font-size: 13px; }
   .auth-right .quote { font-size: 12px; color: #64748b; position: relative; z-index: 1; }
 
+  /* Feature carousel (auth screen, right panel) */
+  .fc { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; justify-content: center; max-width: 480px; }
+  .fc-track { display: grid; }
+  .fc-slide { grid-area: 1 / 1; opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s cubic-bezier(.2,.8,.2,1); pointer-events: none; visibility: hidden; }
+  .fc-slide.is-active { opacity: 1; transform: none; pointer-events: auto; visibility: visible; }
+  .fc-slide.is-leaving { opacity: 0; transform: translateY(-14px); visibility: visible; }
+  .fc-tag { display: inline-block; font-size: 12px; font-weight: 600; color: #c7d2fe; background: rgba(99,102,241,.18); border: 1px solid rgba(129,140,248,.3); padding: 3px 10px; border-radius: 999px; }
+  .fc-visual { margin-top: 28px; padding: 16px; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); min-height: 132px; display: flex; flex-direction: column; justify-content: center; }
+  .fc-pillars { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .fc-pillars span { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #e2e8f0; background: rgba(255,255,255,.06); padding: 8px 12px; border-radius: 10px; }
+  .fc-pillars b { color: #a5b4fc; font-weight: 400; }
+  .fc-pillars i { color: #475569; font-style: normal; }
+  .fc-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .fc-chips span { font-size: 12.5px; font-weight: 600; color: #fff; padding: 6px 11px; border-radius: 8px; background: color-mix(in srgb, var(--c) 28%, transparent); border: 1px solid color-mix(in srgb, var(--c) 55%, transparent); }
+  .fc-slide.is-active .fc-chips span { animation: fcPop .45s ease-out backwards; }
+  .fc-slide.is-active .fc-chips span:nth-child(2) { animation-delay: .05s; } .fc-slide.is-active .fc-chips span:nth-child(3) { animation-delay: .1s; }
+  .fc-slide.is-active .fc-chips span:nth-child(4) { animation-delay: .15s; } .fc-slide.is-active .fc-chips span:nth-child(5) { animation-delay: .2s; }
+  .fc-slide.is-active .fc-chips span:nth-child(6) { animation-delay: .25s; } .fc-slide.is-active .fc-chips span:nth-child(7) { animation-delay: .3s; }
+  @keyframes fcPop { from { opacity: 0; transform: translateY(6px) scale(.96); } }
+  .fc-table { display: grid; gap: 4px; font-size: 12.5px; }
+  .fc-table div { display: grid; grid-template-columns: 56px 1fr 72px; gap: 8px; padding: 6px 10px; border-radius: 7px; background: rgba(255,255,255,.04); color: #cbd5e1; }
+  .fc-table em { font-style: normal; font-family: var(--mono); font-size: 11px; color: #fdba74; }
+  .fc-slide.is-active .fc-table .x { animation: fcStrike 2.4s ease forwards .6s; }
+  @keyframes fcStrike { 30% { background: rgba(239,68,68,.18); color: #fca5a5; text-decoration: line-through; } 100% { background: rgba(239,68,68,.1); color: #fca5a5; text-decoration: line-through; opacity: .55; } }
+  .fc-note { margin-top: 10px; font-size: 12px; color: #6ee7b7; }
+  .fc-bubble { align-self: flex-end; max-width: 88%; background: #4f46e5; color: #fff; font-size: 13px; padding: 9px 13px; border-radius: 14px 14px 4px 14px; }
+  .fc-steps { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+  .fc-steps li { font-size: 12.5px; color: #d1fae5; background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.28); padding: 7px 10px; border-radius: 8px; }
+  .fc-steps li::before { content: "✓ "; color: #34d399; }
+  .fc-slide.is-active .fc-steps li { animation: fcPop .45s ease-out backwards .5s; }
+  .fc-slide.is-active .fc-steps li + li { animation-delay: .75s; }
+  .fc-log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .fc-log li { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: #cbd5e1; padding: 6px 10px; border-radius: 8px; background: rgba(255,255,255,.04); }
+  .fc-log time { font-family: var(--mono); font-size: 11px; color: #64748b; }
+  .fc-log span { margin-left: auto; font-size: 11px; color: #a5b4fc; border: 1px solid rgba(165,180,252,.35); padding: 1px 8px; border-radius: 6px; }
+  .fc-visual code { font-family: var(--mono); font-size: 11.5px; background: rgba(255,255,255,.08); padding: 0 5px; border-radius: 4px; }
+  .fc-controls { display: flex; align-items: center; gap: 10px; margin-top: 28px; }
+  .fc-dots { display: flex; gap: 6px; }
+  .fc-dot { position: relative; width: 28px; height: 6px; border-radius: 99px; border: none; padding: 0; background: rgba(255,255,255,.14); cursor: pointer; overflow: hidden; }
+  .fc-dot:hover { background: rgba(255,255,255,.24); }
+  .fc-dot i { position: absolute; inset: 0; width: 0; background: #818cf8; border-radius: inherit; }
+  .fc-dot[aria-current="true"] { width: 44px; }
+  .fc-dot[aria-current="true"] i { width: 100%; }
+  .fc.playing .fc-dot[aria-current="true"] i { animation: fcFill var(--fc-ms, 5500ms) linear forwards; }
+  @keyframes fcFill { from { width: 0; } to { width: 100%; } }
+  .fc-arrow, .fc-pause { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.04); color: #cbd5e1; cursor: pointer; font-size: 16px; line-height: 1; display: grid; place-items: center; }
+  .fc-pause { font-size: 9px; letter-spacing: -1px; margin-left: auto; }
+  .fc-arrow:hover, .fc-pause:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .fc-dot:focus-visible, .fc-arrow:focus-visible, .fc-pause:focus-visible { outline: 2px solid #a5b4fc; outline-offset: 2px; }
+
   /* ---------- App shell ---------- */
   #app { height: 100vh; display: flex; flex-direction: column; }
   .topbar {
@@ -656,17 +706,92 @@
     <div class="auth-legal">© 2026 Byte BX. Prototype — no real data leaves your browser.</div>
   </div>
 
-  <aside class="auth-right" aria-hidden="true">
-    <div>
-      <div class="eyebrow">Byte BX · Data Purge Studio</div>
-      <h2>Welcome to Data Purge Studio</h2>
-      <p class="lead">A unified workspace to clean, transform and prepare data — from raw files and live sources to analysis-ready datasets.</p>
-      <ul class="feature-list">
-        <li><div class="fi">⇪</div><div><strong>Import &amp; connect</strong><span>CSV, Excel, XML, JSON, Snowflake, Salesforce and databases.</span></div></li>
-        <li><div class="fi">✦</div><div><strong>Prepare &amp; transform</strong><span>Remove nulls, rename, merge, retype and reformat in a few clicks.</span></div></li>
-        <li><div class="fi">◎</div><div><strong>Describe it, AI does it</strong><span>Plain-language tasks turned into repeatable operations.</span></div></li>
-      </ul>
+  <aside class="auth-right" aria-roledescription="carousel" aria-label="Data Purge Studio features">
+    <div class="eyebrow">Byte BX · Data Purge Studio</div>
+
+    <div class="fc" id="fc">
+      <div class="fc-track" id="fc-track" aria-live="off">
+        <section class="fc-slide is-active" aria-roledescription="slide" aria-label="1 of 6">
+          <span class="fc-tag">Welcome</span>
+          <h2>Welcome to Data Purge Studio</h2>
+          <p class="lead">A unified workspace to clean, transform and prepare data — from raw files and live sources to analysis-ready datasets.</p>
+          <div class="fc-visual">
+            <div class="fc-pillars">
+              <span><b>⇪</b>Import</span><i>→</i><span><b>✦</b>Clean</span><i>→</i><span><b>◎</b>AI</span><i>→</i><span><b>⇩</b>Export</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="fc-slide" aria-roledescription="slide" aria-label="2 of 6">
+          <span class="fc-tag">Import &amp; connect</span>
+          <h2>Every source in one workspace</h2>
+          <p class="lead">Upload CSV, Excel, XML or JSON files, or connect Snowflake, Salesforce and your databases in a few clicks.</p>
+          <div class="fc-visual">
+            <div class="fc-chips">
+              <span style="--c:#10b981">CSV</span><span style="--c:#15803d">Excel</span><span style="--c:#f59e0b">XML</span><span style="--c:#7c3aed">JSON</span>
+              <span style="--c:#0ea5e9">❄ Snowflake</span><span style="--c:#2563eb">☁ Salesforce</span><span style="--c:#64748b">⛁ Database</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="fc-slide" aria-roledescription="slide" aria-label="3 of 6">
+          <span class="fc-tag">Prepare</span>
+          <h2>Fix messy data in one click</h2>
+          <p class="lead">Remove empty rows and duplicates, rename columns and replace values — no formulas or scripts.</p>
+          <div class="fc-visual">
+            <div class="fc-table">
+              <div><span>1001</span><span>Olivia Martin</span><span>$1,250</span></div>
+              <div class="x"><span>1002</span><span>Liam Chen</span><span><em>null</em></span></div>
+              <div><span>1003</span><span>Ava Patel</span><span>$2,310</span></div>
+              <div class="x"><span>1003</span><span>Ava Patel</span><span>dup</span></div>
+            </div>
+            <div class="fc-note">✓ 2 rows removed · 4 clean rows left</div>
+          </div>
+        </section>
+
+        <section class="fc-slide" aria-roledescription="slide" aria-label="4 of 6">
+          <span class="fc-tag">AI preparation</span>
+          <h2>Describe it. AI does it.</h2>
+          <p class="lead">Type what you need in plain language. AI suggests the steps, you review them, then apply them all at once.</p>
+          <div class="fc-visual">
+            <div class="fc-bubble">Drop rows where revenue is empty and remove temp_id</div>
+            <ul class="fc-steps"><li>Remove 2 rows where <code>revenue</code> is null</li><li>Drop column <code>temp_id</code></li></ul>
+          </div>
+        </section>
+
+        <section class="fc-slide" aria-roledescription="slide" aria-label="5 of 6">
+          <span class="fc-tag">Transform &amp; track</span>
+          <h2>Every change, on the record</h2>
+          <p class="lead">Change types, format dates and currency, split columns — and see each step in the activity log, ready to undo.</p>
+          <div class="fc-visual">
+            <ul class="fc-log">
+              <li><time>9:14</time>Formatted <code>revenue</code> as USD</li>
+              <li><time>9:16</time>Changed <code>order_date</code> to Date</li>
+              <li><time>9:17</time>Split <code>email</code> by <code>@</code><span>Undo</span></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="fc-slide" aria-roledescription="slide" aria-label="6 of 6">
+          <span class="fc-tag">Export</span>
+          <h2>Send clean data anywhere</h2>
+          <p class="lead">Export as CSV, Excel, JSON or XML, or push it back to your tools. Drafts are kept for 7 days.</p>
+          <div class="fc-visual">
+            <div class="fc-chips export">
+              <span style="--c:#10b981">⇩ CSV</span><span style="--c:#15803d">⇩ Excel</span><span style="--c:#7c3aed">⇩ JSON</span><span style="--c:#f59e0b">⇩ XML</span><span style="--c:#2563eb">→ Salesforce</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="fc-controls">
+        <button class="fc-arrow" id="fc-prev" aria-label="Previous feature">‹</button>
+        <div class="fc-dots" id="fc-dots" role="group" aria-label="Choose a feature"></div>
+        <button class="fc-arrow" id="fc-next" aria-label="Next feature">›</button>
+        <button class="fc-pause" id="fc-pause" aria-label="Pause carousel">❚❚</button>
+      </div>
     </div>
+
     <div class="quote">Your data, your control — every action is logged and reversible.</div>
   </aside>
 </div>
@@ -1988,6 +2113,64 @@
       renderOps();
     }
   }
+
+  /* ================= Auth feature carousel ================= */
+  (function featureCarousel() {
+    const root = $('#fc');
+    if (!root) return;
+    const slides = $$('.fc-slide', root);
+    const dots = $('#fc-dots');
+    const pauseBtn = $('#fc-pause');
+    const MS = 5500;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let i = 0, timer = null, userPaused = reduceMotion, hoverPaused = false;
+    root.style.setProperty('--fc-ms', MS + 'ms');
+    dots.innerHTML = slides.map((sl, n) => `<button class="fc-dot" aria-label="Show feature ${n + 1}: ${esc(sl.querySelector('.fc-tag').textContent)}"${n === 0 ? ' aria-current="true"' : ''}><i></i></button>`).join('');
+    const dotEls = $$('.fc-dot', dots);
+
+    function go(n) {
+      const prev = slides[i];
+      i = (n + slides.length) % slides.length;
+      if (prev === slides[i]) return;
+      prev.classList.remove('is-active');
+      prev.classList.add('is-leaving');
+      setTimeout(() => prev.classList.remove('is-leaving'), 600);
+      slides[i].classList.add('is-active');
+      dotEls.forEach((d, k) => (k === i ? d.setAttribute('aria-current', 'true') : d.removeAttribute('aria-current')));
+      restart();
+    }
+    function playing() { return !userPaused && !hoverPaused && !$('#auth').hidden && !document.hidden; }
+    function restart() {
+      clearTimeout(timer);
+      // re-trigger the progress fill on the active dot
+      root.classList.remove('playing'); void root.offsetWidth;
+      if (playing()) { root.classList.add('playing'); timer = setTimeout(() => go(i + 1), MS); }
+    }
+    function setPaused(p) {
+      userPaused = p;
+      pauseBtn.textContent = p ? '▶' : '❚❚';
+      pauseBtn.setAttribute('aria-label', p ? 'Play carousel' : 'Pause carousel');
+      // announce slide changes only when the user is driving it
+      $('#fc-track').setAttribute('aria-live', p ? 'polite' : 'off');
+      restart();
+    }
+    dotEls.forEach((d, k) => d.addEventListener('click', () => go(k)));
+    $('#fc-prev').addEventListener('click', () => go(i - 1));
+    $('#fc-next').addEventListener('click', () => go(i + 1));
+    pauseBtn.addEventListener('click', () => setPaused(!userPaused));
+    root.addEventListener('mouseenter', () => { hoverPaused = true; restart(); });
+    root.addEventListener('mouseleave', () => { hoverPaused = false; restart(); });
+    root.addEventListener('focusin', () => { hoverPaused = true; restart(); });
+    root.addEventListener('focusout', (e) => { if (!root.contains(e.relatedTarget)) { hoverPaused = false; restart(); } });
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(i + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(i - 1); }
+    });
+    document.addEventListener('visibilitychange', restart);
+    // resume when the user signs out and returns to the auth screen
+    new MutationObserver(restart).observe($('#auth'), { attributes: true, attributeFilter: ['hidden'] });
+    setPaused(userPaused);
+  })();
 
   // Initial view — landing.html links to index.html#signup for "Create account".
   showAuthView(location.hash === '#signup' ? 'signup' : 'signin');
