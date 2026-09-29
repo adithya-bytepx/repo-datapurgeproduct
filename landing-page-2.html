@@ -69,7 +69,7 @@
   .app-icon { display: block; filter: drop-shadow(0 24px 30px rgba(11,108,255,.28)) drop-shadow(0 6px 8px rgba(0,0,0,.08)); }
 
   /* ---------- Hero ---------- */
-  .hero { padding: 150px 0 72px; text-align: center; }
+  .hero { padding: 132px 0 40px; text-align: center; overflow: hidden; }
   .hero .app-icon { width: 168px; height: 168px; margin: 0 auto 36px; animation: float 6s ease-in-out infinite; }
   @keyframes float { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-8px) rotate(1deg); } }
   .hero .by { font-size: 15px; color: var(--ink-3); font-weight: 500; margin: 0 0 14px; }
@@ -79,6 +79,82 @@
   .lede { font-size: clamp(19px, 2.2vw, 23px); line-height: 1.45; color: var(--ink-2); max-width: 640px; margin: 0 auto 34px; letter-spacing: -0.01em; }
   .cta-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
   .hint { margin-top: 16px; font-size: 14px; color: var(--ink-3); }
+  .badge-pill {
+    display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px 5px 6px; margin-bottom: 26px;
+    background: #fff; border: 1px solid var(--line); border-radius: 999px; font-size: 14px; font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04); transition: border-color .15s;
+  }
+  .badge-pill:hover { border-color: #c9d8f5; }
+  .badge-pill svg { width: 22px; height: 22px; }
+  .badge-pill span { color: var(--ink-3); }
+
+  /* ---------- Purge flow (hero visual) ---------- */
+  .flow {
+    --cw: 262px; --ch: 76px;
+    position: relative; height: 430px; margin: 44px auto 0; max-width: 1400px; overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+  }
+  .lane { position: absolute; left: 0; right: 0; height: var(--ch); }
+  .lane[data-lane="0"] { top: 52px; }
+  .lane[data-lane="1"] { top: calc(50% - var(--ch) / 2); }
+  .lane[data-lane="2"] { bottom: 52px; }
+  .fcard { position: absolute; top: 0; left: 0; width: var(--cw); height: var(--ch); will-change: transform; z-index: 1; }
+  .fcard .inner {
+    position: absolute; inset: 0; border-radius: 16px; background: #fff; display: flex; align-items: center; gap: 12px; padding: 0 14px;
+    border: 1px solid rgba(0,0,0,.05); box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 10px 24px -14px rgba(0,0,0,.25);
+    transform: translateY(var(--dy, 0)) rotate(var(--rot, 0deg));
+    transition: transform .6s cubic-bezier(.2,.8,.2,1), background .4s, box-shadow .4s;
+  }
+  .fcard .face { display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; }
+  .fcard .face.clean { display: none; }
+  .fcard.is-clean .face.messy { display: none; }
+  .fcard.is-clean .face.clean { display: flex; animation: faceIn .45s ease-out; }
+  .fcard.is-clean .inner { --rot: 0deg; --dy: 0px; }
+  .fcard.flash .inner { box-shadow: 0 0 0 2px rgba(11,108,255,.5), 0 14px 30px -12px rgba(11,108,255,.45); }
+  @keyframes faceIn { from { opacity: 0; transform: scale(.96); } }
+  .f-ic { width: 44px; height: 44px; flex-shrink: 0; display: grid; place-items: center; }
+  .f-ic svg { width: 44px; height: 44px; display: block; }
+  .face.messy .f-ic { filter: grayscale(1); opacity: .45; }
+  .f-txt { min-width: 0; flex: 1; }
+  .f-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.01em; }
+  .face.messy .f-name { color: #a1a1aa; font-weight: 500; }
+  .f-sub { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .skel { display: flex; gap: 6px; margin-top: 6px; }
+  .skel i { height: 7px; border-radius: 4px; background: #ececef; display: block; }
+  .f-side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+  .chip { font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 999px; white-space: nowrap; }
+  .chip.red { background: #fef2f2; color: #dc2626; }
+  .chip.amber { background: #fffbeb; color: #b45309; }
+  .chip.ok { background: #ecfdf5; color: #15803d; }
+  .f-stat { font-size: 15px; font-weight: 700; color: var(--blue); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+
+  .flow-beam {
+    position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; transform: translateX(-50%); z-index: 2;
+    background: linear-gradient(180deg, transparent, rgba(11,108,255,.9) 22%, var(--blue) 50%, rgba(11,108,255,.9) 78%, transparent);
+    box-shadow: 0 0 22px 6px rgba(11,108,255,.25);
+  }
+  .flow-beam::after { /* soft wash so cards look "scanned" as they pass */
+    content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 120px; transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(11,108,255,.12), transparent);
+  }
+  .flow-core {
+    position: absolute; left: 50%; top: 50%; width: 112px; height: 112px; transform: translate(-50%, -50%); z-index: 3;
+    border-radius: 30px; filter: drop-shadow(0 18px 30px rgba(11,108,255,.45));
+  }
+  .flow-core svg { width: 100%; height: 100%; display: block; }
+  .flow-core::before {
+    content: ""; position: absolute; inset: -14px; border-radius: 40px; border: 2px solid rgba(11,108,255,.35); opacity: 0;
+  }
+  .flow-core.pulse::before { animation: ring .7s ease-out; }
+  @keyframes ring { from { opacity: 1; transform: scale(.9); } to { opacity: 0; transform: scale(1.25); } }
+  .flow-label { position: absolute; bottom: 10px; font-size: 13px; font-weight: 500; color: var(--ink-3); display: flex; align-items: center; gap: 8px; z-index: 2; }
+  .flow-label i { width: 8px; height: 8px; border-radius: 50%; background: #c4c4c9; }
+  .flow-label.left { left: 18%; }
+  .flow-label.right { right: 18%; color: var(--blue); }
+  .flow-label.right i { background: var(--blue); }
+  .flow-count { text-align: center; margin: 18px 0 0; font-size: 14px; color: var(--ink-3); }
+  .flow-count b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
 
   /* ---------- Sections ---------- */
   .block { padding: 96px 0; }
@@ -209,7 +285,12 @@
     .wrap { padding: 0 16px; }
     .nav a.link { display: none; }
     .nav-brand { margin-right: 6px; }
-    .hero { padding-top: 120px; }
+    .hero { padding-top: 108px; }
+    .flow { --cw: 206px; --ch: 66px; height: 360px; margin-top: 32px; }
+    .flow-core { width: 84px; height: 84px; border-radius: 22px; }
+    .f-ic, .f-ic svg { width: 36px; height: 36px; }
+    .f-side .chip + .chip { display: none; }
+    .flow-label.left { left: 8%; } .flow-label.right { right: 8%; }
     .hero .app-icon { width: 128px; height: 128px; }
     .block { padding: 64px 0; }
     .tiles { grid-template-columns: repeat(2, 1fr); padding: 12px; }
@@ -282,8 +363,7 @@
 <!-- ================= HERO ================= -->
 <header class="hero" id="top">
   <div class="wrap">
-    <svg class="app-icon" viewBox="0 0 200 200" role="img" aria-label="Data Purge Studio app icon"><use href="#dps-icon"/></svg>
-    <p class="by">Data Purge Studio · by Byte BX</p>
+    <a class="badge-pill" href="#ai"><svg aria-hidden="true"><use href="#dps-icon"/></svg>AI-assisted cleaning is live <span aria-hidden="true">→</span></a>
     <h1 class="big">Messy data in.<br><span class="muted-word">Clean data out.</span></h1>
     <p class="lede">No more half-finished spreadsheets and one-off scripts. Data Purge Studio gives every dataset one home — to import, clean, transform and export in minutes.</p>
     <div class="cta-row">
@@ -292,6 +372,18 @@
     </div>
     <p class="hint">Free while in early access · No credit card</p>
   </div>
+
+  <!-- Purge flow: messy sources drift in from the left, pass through the studio, leave clean on the right -->
+  <div class="flow" id="flow" role="img" aria-label="Animation: messy data files from CSV, Excel, XML, JSON, SQL, Snowflake and Salesforce flow into Data Purge Studio and come out clean.">
+    <div class="lane" data-lane="0" aria-hidden="true"></div>
+    <div class="lane" data-lane="1" aria-hidden="true"></div>
+    <div class="lane" data-lane="2" aria-hidden="true"></div>
+    <div class="flow-beam" aria-hidden="true"></div>
+    <div class="flow-core" id="flow-core" aria-hidden="true"><svg viewBox="0 0 200 200"><use href="#dps-icon"/></svg></div>
+    <div class="flow-label left" aria-hidden="true"><i></i>Messy in</div>
+    <div class="flow-label right" aria-hidden="true"><i></i>Clean out</div>
+  </div>
+  <p class="flow-count" aria-live="off"><b id="rows-cleaned">0</b> rows purged while you’ve been reading</p>
 </header>
 
 <!-- ================= WORKSPACE ================= -->
@@ -473,6 +565,139 @@
     if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
   }), { rootMargin: '0px 0px -10% 0px' });
   $$('.rv').forEach((el) => io.observe(el));
+
+  /* ---------- Hero purge flow ---------- */
+  (function purgeFlow() {
+    const flow = $('#flow');
+    if (!flow) return;
+    const rand = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const fmt = (n) => n.toLocaleString('en-US');
+
+    // Generic source glyphs (drawn here, not brand logos)
+    const docIcon = (c1, c2, label) => `<svg viewBox="0 0 96 116" style="--c1:${c1};--c2:${c2}"><use href="#doc"/>
+      <text x="48" y="86" text-anchor="middle" font-family="system-ui, sans-serif" font-size="${label.length > 3 ? 19 : 23}" font-weight="800" fill="#fff">${label}</text></svg>`;
+    const tileIcon = (bg, inner) => `<svg viewBox="0 0 44 44"><rect width="44" height="44" rx="11" fill="${bg}"/>${inner}</svg>`;
+    const DB = (bg) => tileIcon(bg, `<g fill="none" stroke="#fff" stroke-width="2.4"><ellipse cx="22" cy="13" rx="10" ry="4"/><path d="M12 13v18c0 2.2 4.5 4 10 4s10-1.8 10-4V13"/><path d="M12 22c0 2.2 4.5 4 10 4s10-1.8 10-4"/></g>`);
+    const SNOW = tileIcon('#0ea5e9', `<g stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M22 9v26M10.7 15.5l22.6 13M10.7 28.5l22.6-13"/><path d="M18 11l4 3 4-3M18 33l4-3 4 3" fill="none"/></g>`);
+    const CLOUD = tileIcon('#2563eb', `<path d="M15 30a6 6 0 0 1-.6-12 8 8 0 0 1 15.2-2.4A6.5 6.5 0 1 1 30.5 30z" fill="#fff"/>`);
+
+    const SOURCES = [
+      { icon: docIcon('#10b981', '#6ee7b7', 'CSV'),  clean: ['sales_data.csv', 'customers.csv', 'orders_2026.csv'], messy: ['sales_data_FINAL(2).csv', 'Customers v3 copy.csv', 'orders_2026 (1).csv'] },
+      { icon: docIcon('#15803d', '#86efac', 'XLS'),  clean: ['inventory_q3.xlsx', 'budget_fy26.xlsx'], messy: ['Inventory Q3 - DO NOT EDIT.xlsx', 'budget_fy26_old_old.xlsx'] },
+      { icon: docIcon('#f59e0b', '#fde68a', 'XML'),  clean: ['product_catalog.xml', 'suppliers.xml'], messy: ['catalog_export_old.xml', 'suppliers_backup.xml'] },
+      { icon: docIcon('#7c3aed', '#c4b5fd', 'JSON'), clean: ['web_events.json', 'api_users.json'], messy: ['events_dump_raw.json', 'api_users (copy).json'] },
+      { icon: DB('#334155'), clean: ['public.customers', 'dbo.transactions'], messy: ['customers_tmp_bak', 'transactions_v2_final'], sub: 'SQL database' },
+      { icon: DB('#336791'), clean: ['events (Postgres)', 'accounts (Postgres)'], messy: ['events_staging', 'accounts_OLD'], sub: 'PostgreSQL' },
+      { icon: SNOW, clean: ['ANALYTICS.ORDERS', 'SALES.REVENUE'], messy: ['orders_raw_v2', 'revenue_unvalidated'], sub: 'Snowflake' },
+      { icon: CLOUD, clean: ['Leads (Salesforce)', 'Opportunities'], messy: ['Leads export 12-09', 'Opps_dupes_check'], sub: 'Salesforce' },
+    ];
+    const ISSUES = [['red', 'nulls'], ['amber', 'dupes'], ['amber', 'mixed dates'], ['red', '#N/A'], ['amber', 'bad emails'], ['red', 'blank rows']];
+
+    function makeData() {
+      const s = pick(SOURCES);
+      const i = rand(0, s.clean.length - 1);
+      const rows = rand(800, 48000);
+      const a = pick(ISSUES), b = pick(ISSUES.filter((x) => x !== a));
+      const n1 = rand(12, 900), n2 = rand(4, 300);
+      return { s, cleanName: s.clean[i], messyName: s.messy[i % s.messy.length], rows, a, b, n1, n2 };
+    }
+
+    function fill(card, d) {
+      const skelW = [rand(26, 60), rand(20, 44), rand(14, 30)];
+      card.innerHTML = `<div class="inner">
+        <div class="face messy">
+          <span class="f-ic">${d.s.icon}</span>
+          <span class="f-txt"><div class="f-name">${d.messyName}</div><div class="skel">${skelW.map((w) => `<i style="width:${w}px"></i>`).join('')}</div></span>
+          <span class="f-side"><span class="chip ${d.a[0]}">${d.a[1] === '#N/A' ? '' : fmt(d.n1) + ' '}${d.a[1]}</span><span class="chip ${d.b[0]}">${d.b[1] === '#N/A' ? '' : fmt(d.n2) + ' '}${d.b[1]}</span></span>
+        </div>
+        <div class="face clean">
+          <span class="f-ic">${d.s.icon}</span>
+          <span class="f-txt"><div class="f-name">${d.cleanName}</div><div class="f-sub">${fmt(d.rows)} rows${d.s.sub ? ' · ' + d.s.sub : ''}</div></span>
+          <span class="f-side"><span class="f-stat">−${fmt(d.n1 + d.n2)}</span><span class="chip ok">✓ clean</span></span>
+        </div></div>`;
+      // messy cards sit crooked; clean ones snap straight (via .is-clean)
+      const inner = card.firstElementChild;
+      inner.style.setProperty('--rot', (Math.random() * 10 - 5).toFixed(1) + 'deg');
+      inner.style.setProperty('--dy', rand(-10, 10) + 'px');
+    }
+
+    const LANES = $$('.lane', flow).map((el, i) => ({ el, speed: [34, 48, 40][i], cards: [] }));
+    let W = 0, gap = 26, stageW = 0, center = 0, cleaned = 0, lastPulse = 0;
+    const counter = $('#rows-cleaned');
+    const core = $('#flow-core');
+
+    function setClean(c, animate) {
+      c.clean = true;
+      c.el.classList.add('is-clean');
+      if (!animate) return;
+      cleaned += c.data.rows;
+      counter.textContent = fmt(cleaned);
+      c.el.classList.add('flash');
+      setTimeout(() => c.el.classList.remove('flash'), 550);
+      const now = performance.now();
+      if (now - lastPulse > 350) { lastPulse = now; core.classList.remove('pulse'); void core.offsetWidth; core.classList.add('pulse'); }
+    }
+
+    function build() {
+      stageW = flow.clientWidth;
+      center = stageW / 2;
+      W = parseFloat(getComputedStyle(flow).getPropertyValue('--cw')) || 262;
+      const step = W + gap;
+      LANES.forEach((lane, li) => {
+        lane.el.innerHTML = '';
+        lane.cards = [];
+        const n = Math.ceil(stageW / step) + 2;
+        const offset = -step + (li % 2 ? step / 2 : 0) - rand(0, 40);
+        for (let i = 0; i < n; i++) {
+          const el = document.createElement('div');
+          el.className = 'fcard';
+          const c = { el, x: offset + i * step, clean: false, data: makeData() };
+          fill(el, c.data);
+          if (c.x + W / 2 >= center) setClean(c, false);
+          el.style.transform = `translate3d(${c.x}px,0,0)`;
+          lane.el.appendChild(el);
+          lane.cards.push(c);
+        }
+      });
+    }
+
+    function tick(dt) {
+      LANES.forEach((lane) => {
+        let minX = Infinity;
+        lane.cards.forEach((c) => { if (c.x < minX) minX = c.x; });
+        lane.cards.forEach((c) => {
+          c.x += lane.speed * dt;
+          if (!c.clean && c.x + W / 2 >= center) setClean(c, true);
+          if (c.x > stageW) { // recycle as a fresh messy card on the far left
+            c.x = minX - (W + gap);
+            minX = c.x;
+            c.clean = false;
+            c.el.classList.remove('is-clean', 'flash');
+            c.data = makeData();
+            fill(c.el, c.data);
+          }
+          c.el.style.transform = `translate3d(${c.x.toFixed(1)}px,0,0)`;
+        });
+      });
+    }
+
+    build();
+    if (reduce) return; // static: messy on the left, clean on the right
+
+    let running = false, last = 0, raf = 0;
+    const loop = (t) => {
+      const dt = Math.min(0.05, (t - last) / 1000);
+      last = t;
+      tick(dt);
+      raf = requestAnimationFrame(loop);
+    };
+    const start = () => { if (running) return; running = true; last = performance.now(); raf = requestAnimationFrame(loop); };
+    const stop = () => { running = false; cancelAnimationFrame(raf); };
+    new IntersectionObserver((e) => (e[0].isIntersecting ? start() : stop())).observe(flow);
+    let rt;
+    addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (flow.clientWidth !== stageW) build(); }, 150); });
+  })();
 
   /* Dataset tiles */
   const DOC = (c1, c2, label) => `<svg class="doc" viewBox="0 0 96 116" aria-hidden="true" style="--c1:${c1};--c2:${c2}"><use href="#doc"/>
